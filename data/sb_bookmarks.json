@@ -1,0 +1,9 @@
+{
+  "phils min 50": {
+    "stat_type": "Batting",
+    "min_pa": 50,
+    "teams": [
+      "PHI"
+    ]
+  }
+}
