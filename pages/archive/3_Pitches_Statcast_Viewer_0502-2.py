@@ -6,7 +6,7 @@ import matplotlib.patches as patches
 from matplotlib.lines import Line2D
 import os
 
-from utils.style import inject_custom_css, render_nav_back
+from utils.style import inject_custom_css, render_nav_back, render_data_status
 from config import DEFAULT_SEASON, AVAILABLE_SEASONS
 from utils.data_loader import load_statcast_local, PITCH_TYPE_MAP, ZONE_MAP
 
@@ -15,6 +15,7 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 st.set_page_config(page_title="Statcast Viewer", page_icon="⚾", layout="wide")
 inject_custom_css()
 render_nav_back()
+render_data_status(["statcast", "batter_lookup"])
 
 st.markdown("## 📊 Pitches Statcast Data Viewer")
 st.markdown("Browse your locally stored Statcast pitch data.")
@@ -50,7 +51,12 @@ def load_batter_lookup(season):
     return pd.DataFrame()
 
 # ── Season selector ──────────────────────────────────────────────────────────
-with st.sidebar:
+if st.session_state.get("mobile_mode"):
+    filters = st.expander("⚙️ Statcast Filters", expanded=True)
+else:
+    filters = st.sidebar
+
+with filters:
     st.markdown("### ⚙️ Statcast Filters")
     season = st.selectbox(
         "Season", AVAILABLE_SEASONS,
@@ -82,7 +88,7 @@ if not df_raw.empty:
         df["batter_team"]  = np.where(df["inning_topbot"] == "Bot", df["home_team"], df["away_team"])
 
     # ── Sidebar filters ──────────────────────────────────────────────────────
-    with st.sidebar:
+    with filters:
         if "game_date" in df.columns:
             df["game_date"] = pd.to_datetime(df["game_date"])
             min_date = df["game_date"].min().date()
@@ -379,7 +385,7 @@ if not df_raw.empty:
                         zorder=6,
                     )
 
-            ax.set_xlabel("Horizontal Break (in) — positive = arm side", color="#CCCCCC")
+            ax.set_xlabel("Horizontal Break (in) — ← 3B side       1B side →", color="#CCCCCC")
             ax.set_ylabel("Vertical Break (in) — induced", color="#CCCCCC")
             ax.tick_params(colors="#CCCCCC")
             for spine in ax.spines.values():
@@ -393,7 +399,7 @@ if not df_raw.empty:
                 labelcolor="#CCCCCC", facecolor="#222222", edgecolor="#444444",
             )
             ax.set_title(
-                f"Movement Profile — {season} Season  (pitcher POV)",
+                f"Movement Profile — {season} Season  (catcher's perspective)",
                 color="#CCCCCC", fontsize=10,
             )
 

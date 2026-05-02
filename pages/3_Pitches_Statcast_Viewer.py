@@ -93,9 +93,34 @@ if not df_raw.empty:
             df["game_date"] = pd.to_datetime(df["game_date"])
             min_date = df["game_date"].min().date()
             max_date = df["game_date"].max().date()
+
+            # ── Date range quick-select buttons ──────────────────────────────
+            st.markdown("**Date Range**")
+            shortcut_cols = st.columns(4)
+            shortcuts = {
+                "Last Day":    1,
+                "Last 3 Days": 3,
+                "Last 10 Days": 10,
+                "This Season": None,
+            }
+            if "sc_date_shortcut" not in st.session_state:
+                st.session_state["sc_date_shortcut"] = "This Season"
+
+            for col, (label, days) in zip(shortcut_cols, shortcuts.items()):
+                if col.button(label, key=f"shortcut_{label}", use_container_width=True):
+                    st.session_state["sc_date_shortcut"] = label
+
+            active = st.session_state["sc_date_shortcut"]
+            if active == "This Season" or shortcuts.get(active) is None:
+                default_start = min_date
+            else:
+                import datetime
+                default_start = max(min_date, max_date - datetime.timedelta(days=shortcuts[active] - 1))
+
             date_range = st.date_input(
-                "Date Range", value=(min_date, max_date),
+                "Custom Range", value=(default_start, max_date),
                 min_value=min_date, max_value=max_date,
+                key="sc_date_range",
             )
             if len(date_range) == 2:
                 df = df[
@@ -405,6 +430,37 @@ if not df_raw.empty:
 
             st.pyplot(fig, use_container_width=True)
             plt.close(fig)
+
+    # ── Pitch type breakdown ─────────────────────────────────────────────────
+    if "pitch_desc" in df.columns:
+        st.markdown("### 🔢 Pitch Type Breakdown")
+        pitch_counts = df["pitch_desc"].value_counts().reset_index()
+        pitch_counts.columns = ["Pitch Type", "Count"]
+        pitch_counts["Pct"] = pitch_counts["Count"] / pitch_counts["Count"].sum() * 100
+        pitch_counts = pitch_counts.sort_values("Pct", ascending=True)
+
+        fig_pt, ax_pt = plt.subplots(figsize=(6, max(2, len(pitch_counts) * 0.45)))
+        fig_pt.patch.set_facecolor("#111111")
+        ax_pt.set_facecolor("#111111")
+
+        colors = [PITCH_COLORS.get(p, "#999999") for p in pitch_counts["Pitch Type"]]
+        bars = ax_pt.barh(pitch_counts["Pitch Type"], pitch_counts["Pct"], color=colors, height=0.6)
+
+        for bar, (_, row) in zip(bars, pitch_counts.iterrows()):
+            ax_pt.text(
+                bar.get_width() + 0.5, bar.get_y() + bar.get_height() / 2,
+                f"{row['Pct']:.1f}%  ({int(row['Count']):,})",
+                va="center", ha="left", color="#CCCCCC", fontsize=8,
+            )
+
+        ax_pt.set_xlabel("Usage %", color="#CCCCCC")
+        ax_pt.tick_params(colors="#CCCCCC")
+        ax_pt.set_xlim(0, pitch_counts["Pct"].max() * 1.35)
+        for spine in ax_pt.spines.values():
+            spine.set_edgecolor("#333333")
+
+        st.pyplot(fig_pt, use_container_width=True)
+        plt.close(fig_pt)
 
     st.markdown("---")
 
