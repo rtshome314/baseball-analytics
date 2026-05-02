@@ -196,4 +196,4 @@ def render_data_status(dataset_keys, season=None):
         else:
             parts.append(f"**{label}:** ❓ Unknown")
 
-    st.caption("📦 " + " &nbsp;|&nbsp; ".join(parts))    
+    st.caption("📦 " + " &nbsp;|&nbsp; ".join(parts))   
