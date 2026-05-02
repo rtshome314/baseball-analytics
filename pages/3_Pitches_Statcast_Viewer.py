@@ -87,7 +87,7 @@ if not df_raw.empty:
         df["batter_team"]  = np.where(df["inning_topbot"] == "Bot", df["home_team"], df["away_team"])
 
     # ── Sidebar filters ──────────────────────────────────────────────────────
-    with st.sidebar:
+    with filters:
         if "game_date" in df.columns:
             df["game_date"] = pd.to_datetime(df["game_date"])
             min_date = df["game_date"].min().date()
