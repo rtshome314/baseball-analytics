@@ -25,7 +25,12 @@ render_nav_back()
 
 st.markdown("## 📋 Stats Browser")
 
-with st.sidebar:
+if st.session_state.get("mobile_mode"):
+    filters = st.expander("⚙️ Browser Settings", expanded=True)
+else:
+    filters = st.sidebar
+
+with filters:
     st.markdown("### ⚙️ Browser Settings")
     season = st.selectbox("Season", AVAILABLE_SEASONS, index=AVAILABLE_SEASONS.index(DEFAULT_SEASON), key="sb_season")
     stat_type = st.radio("Stat Type", ["Batting", "Pitching"])
@@ -76,7 +81,7 @@ if not df.empty:
     if search:
         df = df[df["Name"].str.contains(search, case=False, na=False)]
 
-    with st.sidebar:
+    with filters:
         if "Team" in df.columns:
             teams = sorted(df["Team"].dropna().unique().tolist())
             bm_data = st.session_state.get("sb_bm_data", {})

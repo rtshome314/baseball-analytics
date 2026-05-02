@@ -149,4 +149,5 @@ def render_header():
 
 def render_nav_back():
     st.page_link("app.py", label="← Back to Home", icon="🏠")
+    st.toggle("📱 Mobile Mode", key="mobile_mode")
     st.markdown("---")
