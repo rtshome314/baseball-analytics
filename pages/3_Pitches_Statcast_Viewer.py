@@ -108,6 +108,9 @@ if not df_raw.empty:
         for col, label in zip(btn_cols, shortcuts.keys()):
             if col.button(label, key=f"shortcut_{label}", use_container_width=True):
                 st.session_state["sc_date_shortcut"] = label
+                days_val = shortcuts[label]
+                new_start = min_date if days_val is None else max(min_date, max_date - datetime.timedelta(days=days_val - 1))
+                st.session_state["sc_date_range"] = (new_start, max_date)
 
         active = st.session_state["sc_date_shortcut"]
         days = shortcuts.get(active)
