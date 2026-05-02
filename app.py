@@ -42,25 +42,12 @@ else:
 st.markdown("### Welcome")
 st.markdown("Navigate between features:")
 
-col_nav, col_desc = st.columns([1, 2])
-
-with col_nav:
-    st.page_link("pages/1_Player_Comparison.py", label="⚾ Player Comparison")
-    st.page_link("pages/2_Hitter_Statcast.py", label="📊 Hitter Statcast")
-    st.page_link("pages/3_Pitches_Statcast_Viewer.py", label="🎯 Pitches Statcast Viewer")
-    st.page_link("pages/4_Stats_Browser.py", label="📋 Stats Browser")
-    st.page_link("pages/7_Fantasy.py", label="🏆 Fantasy")
-    st.page_link("pages/8_Data_Manager.py", label="💾 Data Manager")
-
-with col_desc:
-    st.markdown("""
-- Compare up to 10 players with Baseball Savant-style percentile charts
-- Browse hitter-level Statcast data
-- Browse the full season of pitch-level Statcast data
-- Explore traditional batting and pitching stats
-- Fantasy league standings, scoring, and trends
-- Download, refresh, and monitor your local data
-""")
+st.page_link("pages/1_Player_Comparison.py", label="⚾ Player Comparison", help="Compare up to 10 players with Baseball Savant-style percentile charts")
+st.page_link("pages/2_Hitter_Statcast.py", label="📊 Hitter Statcast", help="Browse hitter-level Statcast data")
+st.page_link("pages/3_Pitches_Statcast_Viewer.py", label="🎯 Pitches Statcast Viewer", help="Browse the full season of pitch-level Statcast data")
+st.page_link("pages/4_Stats_Browser.py", label="📋 Stats Browser", help="Explore traditional batting and pitching stats")
+st.page_link("pages/7_Fantasy.py", label="🏆 Fantasy", help="Fantasy league standings, scoring, and trends")
+st.page_link("pages/8_Data_Manager.py", label="💾 Data Manager", help="Download, refresh, and monitor your local data")
 
 st.markdown("---")
 
