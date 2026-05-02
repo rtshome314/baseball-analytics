@@ -87,38 +87,37 @@ if not df_raw.empty:
         df["pitcher_team"] = np.where(df["inning_topbot"] == "Bot", df["away_team"], df["home_team"])
         df["batter_team"]  = np.where(df["inning_topbot"] == "Bot", df["home_team"], df["away_team"])
 
+    # ── Date shortcuts (main area — st.columns not allowed in sidebar/expander)
+    import datetime
+    shortcuts = {
+        "Last Day":     1,
+        "Last 3 Days":  3,
+        "Last 10 Days": 10,
+        "This Season":  None,
+    }
+    if "sc_date_shortcut" not in st.session_state:
+        st.session_state["sc_date_shortcut"] = "This Season"
+
+    if "game_date" in df.columns:
+        df["game_date"] = pd.to_datetime(df["game_date"])
+        min_date = df["game_date"].min().date()
+        max_date = df["game_date"].max().date()
+
+        st.markdown("**📅 Date Range**")
+        btn_cols = st.columns(4)
+        for col, label in zip(btn_cols, shortcuts.keys()):
+            if col.button(label, key=f"shortcut_{label}", use_container_width=True):
+                st.session_state["sc_date_shortcut"] = label
+
+        active = st.session_state["sc_date_shortcut"]
+        days = shortcuts.get(active)
+        default_start = min_date if days is None else max(min_date, max_date - datetime.timedelta(days=days - 1))
+
     # ── Sidebar filters ──────────────────────────────────────────────────────
     with filters:
         if "game_date" in df.columns:
-            df["game_date"] = pd.to_datetime(df["game_date"])
-            min_date = df["game_date"].min().date()
-            max_date = df["game_date"].max().date()
-
-            # ── Date range quick-select buttons ──────────────────────────────
-            st.markdown("**Date Range**")
-            shortcut_cols = st.columns(4)
-            shortcuts = {
-                "Last Day":    1,
-                "Last 3 Days": 3,
-                "Last 10 Days": 10,
-                "This Season": None,
-            }
-            if "sc_date_shortcut" not in st.session_state:
-                st.session_state["sc_date_shortcut"] = "This Season"
-
-            for col, (label, days) in zip(shortcut_cols, shortcuts.items()):
-                if col.button(label, key=f"shortcut_{label}", use_container_width=True):
-                    st.session_state["sc_date_shortcut"] = label
-
-            active = st.session_state["sc_date_shortcut"]
-            if active == "This Season" or shortcuts.get(active) is None:
-                default_start = min_date
-            else:
-                import datetime
-                default_start = max(min_date, max_date - datetime.timedelta(days=shortcuts[active] - 1))
-
             date_range = st.date_input(
-                "Custom Range", value=(default_start, max_date),
+                "Date Range", value=(default_start, max_date),
                 min_value=min_date, max_value=max_date,
                 key="sc_date_range",
             )
