@@ -264,16 +264,16 @@ def update_statcast_incremental(season=2025, progress_callback=None):
 
         current = chunk_end + timedelta(days=1)
 
-if new_chunks:
-    new_df = pd.concat(new_chunks, ignore_index=True)
-    existing = pd.read_parquet(filepath)
-    combined = pd.concat([existing, new_df], ignore_index=True)
-    combined = combined.drop_duplicates(
-        subset=["game_pk", "at_bat_number", "pitch_number"],
-        keep="last"
-    )
-    combined["game_date"] = pd.to_datetime(combined["game_date"], errors="coerce")  # <-- add this
-    combined.to_parquet(filepath, index=False)
+    if new_chunks:
+        new_df = pd.concat(new_chunks, ignore_index=True)
+        existing = pd.read_parquet(filepath)
+        combined = pd.concat([existing, new_df], ignore_index=True)
+        combined = combined.drop_duplicates(
+            subset=["game_pk", "at_bat_number", "pitch_number"],
+            keep="last"
+        )
+        combined["game_date"] = pd.to_datetime(combined["game_date"], errors="coerce")
+        combined.to_parquet(filepath, index=False)
 
         meta[f"statcast_{season}_last_refresh"] = datetime.now().isoformat()
         meta[f"statcast_{season}_last_date"] = end.isoformat()
