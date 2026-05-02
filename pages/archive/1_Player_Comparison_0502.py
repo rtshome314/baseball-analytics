@@ -607,8 +607,7 @@ if not trad_stats.empty:
                     display_split = display_split.rename(columns=rename_map)
                     
                     st.dataframe(display_split.reset_index(drop=True), use_container_width=True,
-                                 height=min(600, 50 + len(display_split) * 35),
-                                 column_config={"Player": st.column_config.TextColumn(pinned=True)})
+                                 height=min(600, 50 + len(display_split) * 35))
                 else:
                     st.warning("No split data found for selected players.")
             else:
@@ -621,8 +620,7 @@ if not trad_stats.empty:
                 filtered = trad_stats[trad_stats[name_col_trad].isin(selected_players)]
                 filtered = filtered[[c for c in display_cols if c in filtered.columns]]
                 st.dataframe(filtered.reset_index(drop=True), use_container_width=True,
-                             height=min(400, 50 + len(filtered) * 35),
-                             column_config={"Name": st.column_config.TextColumn(pinned=True)})
+                             height=min(400, 50 + len(filtered) * 35))
     else:
         st.info("👆 Select players above to start comparing.")
 else:
