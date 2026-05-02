@@ -151,3 +151,49 @@ def render_nav_back():
     st.page_link("app.py", label="← Back to Home", icon="🏠")
     st.toggle("📱 Mobile Mode", key="mobile_mode")
     st.markdown("---")
+    
+def render_data_status(dataset_keys, season=None):
+    from utils.data_loader import get_data_status, _load_metadata
+    from config import DEFAULT_SEASON
+    from datetime import datetime
+
+    if season is None:
+        season = DEFAULT_SEASON
+
+    status = get_data_status(season)
+    meta = _load_metadata()
+
+    dataset_labels = {
+        "statcast": "Statcast Pitches",
+        "batting_stats": "Batting Stats",
+        "pitching_stats": "Pitching Stats",
+        "statcast_batting_agg": "Statcast Batting Agg",
+        "statcast_pitching_agg": "Statcast Pitching Agg",
+        "statcast_batter_pcts": "Batter Percentiles",
+        "statcast_pitcher_pcts": "Pitcher Percentiles",
+        "batter_lookup": "Batter Lookup",
+    }
+
+    parts = []
+    for key in dataset_keys:
+        label = dataset_labels.get(key, key)
+        s = status.get(key, {})
+        if not s.get("exists"):
+            parts.append(f"**{label}:** ❌ Missing")
+        elif s.get("last_refresh"):
+            ago = datetime.now() - s["last_refresh"]
+            hours = ago.total_seconds() / 3600
+            if hours < 1:
+                age = f"{int(ago.total_seconds() / 60)}m ago"
+                icon = "✅"
+            elif hours < 24:
+                age = f"{hours:.1f}h ago"
+                icon = "✅"
+            else:
+                age = f"{hours/24:.1f}d ago"
+                icon = "⚠️"
+            parts.append(f"**{label}:** {icon} {age}")
+        else:
+            parts.append(f"**{label}:** ❓ Unknown")
+
+    st.caption("📦 " + " &nbsp;|&nbsp; ".join(parts))    

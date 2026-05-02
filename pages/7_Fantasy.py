@@ -6,7 +6,7 @@ import plotly.express as px
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from utils.style import inject_custom_css, render_header, render_nav_back
+from utils.style import inject_custom_css, render_header, render_nav_back, render_data_status
 from utils.yahoo_auth import render_auth_flow, get_valid_token, logout
 from utils.yahoo_data import (
     get_league_info, get_teams, get_my_team_key, get_roster,
@@ -24,6 +24,7 @@ st.set_page_config(page_title="Fantasy", page_icon="⚾", layout="wide")
 inject_custom_css()
 render_header()
 render_nav_back()
+render_data_status(["batting_stats", "pitching_stats"])
 
 st.markdown("## 🏆 Fantasy Baseball")
 

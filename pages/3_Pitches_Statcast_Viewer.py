@@ -6,7 +6,7 @@ import matplotlib.patches as patches
 from matplotlib.lines import Line2D
 import os
 
-from utils.style import inject_custom_css, render_nav_back
+from utils.style import inject_custom_css, render_nav_back, render_data_status
 from config import DEFAULT_SEASON, AVAILABLE_SEASONS
 from utils.data_loader import load_statcast_local, PITCH_TYPE_MAP, ZONE_MAP
 
@@ -15,6 +15,7 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 st.set_page_config(page_title="Statcast Viewer", page_icon="⚾", layout="wide")
 inject_custom_css()
 render_nav_back()
+render_data_status(["statcast", "batter_lookup"])
 
 st.markdown("## 📊 Pitches Statcast Data Viewer")
 st.markdown("Browse your locally stored Statcast pitch data.")

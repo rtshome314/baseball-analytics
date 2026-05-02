@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import json
 import os
-from utils.style import inject_custom_css, render_nav_back
+from utils.style import inject_custom_css, render_nav_back, render_data_status
 from config import DEFAULT_SEASON, AVAILABLE_SEASONS
 
 from utils.data_loader import load_batting_stats, load_pitching_stats
@@ -22,6 +22,7 @@ def save_bookmarks(bookmarks):
 st.set_page_config(page_title="Stats Browser", page_icon="⚾", layout="wide")
 inject_custom_css()
 render_nav_back()
+render_data_status(["batting_stats", "pitching_stats"])
 
 st.markdown("## 📋 Stats Browser")
 
