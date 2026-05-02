@@ -50,7 +50,12 @@ def load_batter_lookup(season):
     return pd.DataFrame()
 
 # ── Season selector ──────────────────────────────────────────────────────────
-with st.sidebar:
+if st.session_state.get("mobile_mode"):
+    filters = st.expander("⚙️ Statcast Filters", expanded=True)
+else:
+    filters = st.sidebar
+
+with filters:
     st.markdown("### ⚙️ Statcast Filters")
     season = st.selectbox(
         "Season", AVAILABLE_SEASONS,

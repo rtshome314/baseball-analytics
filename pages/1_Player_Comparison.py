@@ -43,7 +43,12 @@ render_nav_back()
 
 st.markdown("## ⚾ Player Comparison")
 
-with st.sidebar:
+if st.session_state.get("mobile_mode"):
+    filters = st.expander("⚙️ Comparison Settings", expanded=True)
+else:
+    filters = st.sidebar
+
+with filters:
     st.markdown("### ⚙️ Comparison Settings")
     season = st.selectbox("Season", AVAILABLE_SEASONS, index=AVAILABLE_SEASONS.index(DEFAULT_SEASON))
     player_type = st.radio("Player Type", ["Batters", "Pitchers"])

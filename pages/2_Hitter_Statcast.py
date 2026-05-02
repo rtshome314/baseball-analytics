@@ -15,7 +15,12 @@ render_nav_back()
 st.markdown("## 🔥 Hitter Statcast Viewer")
 st.markdown("Explore batted ball data from the hitter's perspective.")
 
-with st.sidebar:
+if st.session_state.get("mobile_mode"):
+    filters = st.expander("⚙️ Settings & Filters", expanded=True)
+else:
+    filters = st.sidebar
+
+with filters:
     st.markdown("### ⚙️ Settings")
     season = st.selectbox("Season", AVAILABLE_SEASONS, index=AVAILABLE_SEASONS.index(DEFAULT_SEASON), key="hs_season")
 
