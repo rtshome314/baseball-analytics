@@ -379,7 +379,7 @@ if not df_raw.empty:
                         zorder=6,
                     )
 
-            ax.set_xlabel("Horizontal Break (in) — ← 3B side       1B side →", color="#CCCCCC")
+            ax.set_xlabel("Horizontal Break (in) — positive = arm side", color="#CCCCCC")
             ax.set_ylabel("Vertical Break (in) — induced", color="#CCCCCC")
             ax.tick_params(colors="#CCCCCC")
             for spine in ax.spines.values():
@@ -393,7 +393,7 @@ if not df_raw.empty:
                 labelcolor="#CCCCCC", facecolor="#222222", edgecolor="#444444",
             )
             ax.set_title(
-                f"Movement Profile — {season} Season  (catcher's perspective)",
+                f"Movement Profile — {season} Season  (pitcher POV)",
                 color="#CCCCCC", fontsize=10,
             )
 
