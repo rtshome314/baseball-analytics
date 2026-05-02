@@ -253,14 +253,10 @@ if not df_raw.empty:
         third_w = (sz_right - sz_left) / 3
         third_h = (sz_top   - sz_bot)  / 3
         for i in (1, 2):
-            ax.axvline(sz_left + i * third_w, sz_bot, sz_top,
-                       color="#AAAAAA", linewidth=0.7, zorder=2,
-                       ymin=(sz_bot - ax.get_ylim()[0]) / (ax.get_ylim()[1] - ax.get_ylim()[0]),
-                       ymax=(sz_top - ax.get_ylim()[0]) / (ax.get_ylim()[1] - ax.get_ylim()[0]))
-            ax.axhline(sz_bot + i * third_h,
-                       color="#AAAAAA", linewidth=0.7, zorder=2,
-                       xmin=(sz_left - ax.get_xlim()[0]) / (ax.get_xlim()[1] - ax.get_xlim()[0]),
-                       xmax=(sz_right - ax.get_xlim()[0]) / (ax.get_xlim()[1] - ax.get_xlim()[0]))
+            x = sz_left + i * third_w
+            ax.plot([x, x], [sz_bot, sz_top], color="#AAAAAA", linewidth=0.7, zorder=2)
+            y = sz_bot + i * third_h
+            ax.plot([sz_left, sz_right], [y, y], color="#AAAAAA", linewidth=0.7, zorder=2)
 
         # Home plate (trapezoid outline)
         plate_x = [-0.708, 0.708, 0.708, 0.0, -0.708, -0.708]
