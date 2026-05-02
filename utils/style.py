@@ -146,3 +146,7 @@ def render_header():
         <div class="subtitle">Statcast Data • Player Comparisons • Predictive Modeling</div>
     </div>
     """, unsafe_allow_html=True)
+
+def render_nav_back():
+    st.page_link("app.py", label="← Back to Home", icon="🏠")
+    st.markdown("---")

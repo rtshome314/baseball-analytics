@@ -1,12 +1,13 @@
 import streamlit as st
 import pandas as pd
-from utils.style import inject_custom_css
+from utils.style import inject_custom_css, render_nav_back
 from config import DEFAULT_SEASON, AVAILABLE_SEASONS
 
 from utils.data_loader import load_statcast_local, PITCH_TYPE_MAP, ZONE_MAP
 
 st.set_page_config(page_title="Statcast Viewer", page_icon="⚾", layout="wide")
 inject_custom_css()
+render_nav_back()
 
 st.markdown("## 📊 Pitches Statcast Data Viewer")
 st.markdown("Browse your locally stored Statcast pitch data.")

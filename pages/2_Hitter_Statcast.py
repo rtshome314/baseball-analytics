@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from utils.style import inject_custom_css
+from utils.style import inject_custom_css, render_nav_back
 from config import DEFAULT_SEASON, AVAILABLE_SEASONS
 
 from utils.data_loader import load_statcast_local, load_batter_lookup, PITCH_TYPE_MAP, ZONE_MAP
@@ -10,6 +10,7 @@ import plotly.express as px
 
 st.set_page_config(page_title="Hitter Statcast", page_icon="⚾", layout="wide")
 inject_custom_css()
+render_nav_back()
 
 st.markdown("## 🔥 Hitter Statcast Viewer")
 st.markdown("Explore batted ball data from the hitter's perspective.")

@@ -2,7 +2,7 @@ import unicodedata
 import streamlit as st
 import pandas as pd
 import numpy as np
-from utils.style import inject_custom_css
+from utils.style import inject_custom_css, render_nav_back
 from config import DEFAULT_SEASON, AVAILABLE_SEASONS
 
 from utils.data_loader import (
@@ -39,6 +39,7 @@ from utils.charts import create_percentile_chart, create_comparison_radar
 
 st.set_page_config(page_title="Player Comparison", page_icon="⚾", layout="wide")
 inject_custom_css()
+render_nav_back()
 
 st.markdown("## ⚾ Player Comparison")
 

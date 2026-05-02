@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 from datetime import datetime
-from utils.style import inject_custom_css
+from utils.style import inject_custom_css, render_nav_back
 from config import DEFAULT_SEASON, AVAILABLE_SEASONS
 
 from utils.data_loader import (
@@ -15,6 +15,7 @@ from utils.data_loader import (
 
 st.set_page_config(page_title="Data Manager", page_icon="⚾", layout="wide")
 inject_custom_css()
+render_nav_back()
 
 st.markdown("## 💾 Data Manager")
 st.markdown("Download, refresh, and monitor your local baseball data.")
