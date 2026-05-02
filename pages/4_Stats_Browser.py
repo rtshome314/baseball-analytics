@@ -92,7 +92,8 @@ if not df.empty:
     df_sorted = df.sort_values(sort_col, ascending=sort_asc)
 
     st.markdown(f"**{len(df_sorted)} players** | Season {season} | Min {qual_col}: {min_pa}")
-    st.dataframe(df_sorted.reset_index(drop=True), use_container_width=True, height=700)
+    st.dataframe(df_sorted.reset_index(drop=True), use_container_width=True, height=700,
+                 column_config={"Name": st.column_config.TextColumn(pinned=True)})
 
     # --- Custom Charts ---
     st.markdown("---")
