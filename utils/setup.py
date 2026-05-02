@@ -2,6 +2,7 @@
 setup.py
 Handles first-run setup and user settings for the Baseball Analytics app.
 Settings are stored in data/user_settings.json so each user can have their own.
+On Streamlit Cloud, settings are read from Streamlit Secrets.
 """
 
 import os
@@ -43,6 +44,16 @@ def save_settings(settings):
 
 def settings_complete(settings=None):
     """Check if required settings are filled in."""
+    # Check Streamlit Secrets first (cloud deployment)
+    try:
+        if (st.secrets.get("YAHOO_CLIENT_ID") and
+            st.secrets.get("YAHOO_CLIENT_SECRET") and
+            st.secrets.get("YAHOO_LEAGUE_ID")):
+            return True
+    except:
+        pass
+
+    # Fall back to checking user_settings.json (local deployment)
     if settings is None:
         settings = load_settings()
     return (
