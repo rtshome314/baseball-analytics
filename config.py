@@ -2,12 +2,12 @@
 config.py
 App configuration. User-specific settings (Yahoo credentials, league ID) are
 stored in data/user_settings.json and override these defaults.
+On Streamlit Cloud, credentials are read from Streamlit Secrets.
 """
-
 import os
 import json
 
-# Default values — overridden by user_settings.json if it exists
+# Default values — overridden by user_settings.json or Streamlit secrets
 _DEFAULTS = {
     "yahoo_client_id": "",
     "yahoo_client_secret": "",
@@ -29,9 +29,16 @@ def _load_user_settings():
 
 _user = _load_user_settings()
 
-YAHOO_CLIENT_ID = _user.get("yahoo_client_id") or ""
-YAHOO_CLIENT_SECRET = _user.get("yahoo_client_secret") or ""
-YAHOO_LEAGUE_ID = _user.get("yahoo_league_id") or ""
+def _get_secret(key, default=""):
+    try:
+        import streamlit as st
+        return st.secrets[key]
+    except:
+        return _user.get(key.lower(), default)
+
+YAHOO_CLIENT_ID = _get_secret("YAHOO_CLIENT_ID")
+YAHOO_CLIENT_SECRET = _get_secret("YAHOO_CLIENT_SECRET")
+YAHOO_LEAGUE_ID = _get_secret("YAHOO_LEAGUE_ID")
 YAHOO_REDIRECT_URI = _user.get("yahoo_redirect_uri", "https://localhost")
 
 # Update this each season (or set via user settings)
