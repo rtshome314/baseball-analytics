@@ -79,6 +79,13 @@ if not df.empty:
     if qual_col in df.columns:
         df = df[df[qual_col] >= min_pa]
 
+    # --- Per-162 calculated columns (batting only) ---
+    if stat_type == "Batting":
+        if "H" in df.columns and "G" in df.columns:
+            df["H/162"] = (df["H"] / (df["G"] / 162)).round(1)
+        if "HR" in df.columns and "G" in df.columns:
+            df["HR/162"] = (df["HR"] / (df["G"] / 162)).round(1)
+
     search = st.text_input("🔍 Search player name", "")
     if search:
         df = df[df["Name"].str.contains(search, case=False, na=False)]
@@ -91,6 +98,36 @@ if not df.empty:
             selected_teams = st.multiselect("Filter by Team", teams, default=default_teams, key="sb_teams")
             if selected_teams:
                 df = df[df["Team"].isin(selected_teams)]
+
+        if stat_type == "Batting" and "Pos" in df.columns:
+            POS_MAP = {
+                "C": "2", "1B": "3", "2B": "4", "3B": "5",
+                "SS": "6", "LF": "7", "CF": "8", "RF": "9", "DH": "D",
+            }
+            pos_labels = list(POS_MAP.keys())
+
+            st.markdown("**Filter by Position (appeared at)**")
+            sel_pos = st.multiselect("Position", pos_labels, key="sb_pos_appeared", label_visibility="collapsed")
+            if sel_pos:
+                codes = [POS_MAP[p] for p in sel_pos]
+                def appeared_at(pos_str, codes=codes):
+                    if not isinstance(pos_str, str):
+                        return False
+                    # All position codes are single chars; strip asterisk/slash and check membership
+                    chars = set(pos_str.replace("*", "").replace("/", ""))
+                    return any(c in chars for c in codes)
+                df = df[df["Pos"].apply(appeared_at)]
+
+            st.markdown("**Filter by Primary Position**")
+            sel_primary = st.multiselect("Primary Position", pos_labels, key="sb_pos_primary", label_visibility="collapsed")
+            if sel_primary:
+                codes_p = [POS_MAP[p] for p in sel_primary]
+                def is_primary(pos_str, codes_p=codes_p):
+                    if not isinstance(pos_str, str) or "*" not in pos_str:
+                        return False
+                    stripped = pos_str.lstrip("*")
+                    return any(stripped.startswith(c) for c in codes_p)
+                df = df[df["Pos"].apply(is_primary)]
 
         sortable = [c for c in df.columns if df[c].dtype in ["float64", "int64", "float32", "int32"]]
         sort_col = st.selectbox("Sort by", sortable, index=0)

@@ -37,7 +37,7 @@ def save_bookmarks(bookmarks):
     os.makedirs(os.path.dirname(BOOKMARKS_FILE), exist_ok=True)
     with open(BOOKMARKS_FILE, "w") as f:
         json.dump(bookmarks, f, indent=2)
-from utils.charts import create_percentile_chart, create_comparison_radar
+from utils.charts import create_percentile_chart
 
 st.set_page_config(page_title="Player Comparison", page_icon="⚾", layout="wide")
 inject_custom_css()
@@ -312,14 +312,15 @@ if not trad_stats.empty:
 
 
 
+        _view_modes = ["Grid View", "Detail View", "Stats Table", "Multi-Year View"]
+        _last_mode = st.session_state.get("last_view_mode", "Grid View")
+        _default_index = _view_modes.index(_last_mode) if _last_mode in _view_modes else 0
         view_mode = st.radio(
             "View Mode",
-            ["Grid View", "Detail View", "Radar Comparison", "Stats Table"],
+            _view_modes,
             horizontal=True,
             key="view_mode_radio",
-            index=["Grid View", "Detail View", "Radar Comparison", "Stats Table"].index(
-                st.session_state.get("last_view_mode", "Grid View")
-            ),
+            index=_default_index,
         )
         st.session_state["last_view_mode"] = view_mode
 
@@ -549,33 +550,82 @@ if not trad_stats.empty:
                                 )
                                 fig = create_percentile_chart(pname, player_pcts, available, raw_values=player_raw, compact=is_compact)
                                 st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+                                # --- Monthly Splits Table (Detail View only) ---
+                                if view_mode == "Detail View" and player_type == "Batters":
+                                    st.markdown("#### 📅 Monthly Splits")
+                                    monthly_summary = load_split_summary(season)
+                                    if not monthly_summary.empty:
+                                        def normalize_monthly(s):
+                                            return unicodedata.normalize("NFD", s).encode("ascii", "ignore").decode("ascii").lower().strip()
+
+                                        p_monthly = monthly_summary[
+                                            monthly_summary["batter_name"].apply(normalize_monthly).str.contains(
+                                                normalize_monthly(pname.split(" ")[-1]), case=False, na=False
+                                            )
+                                        ]
+                                        if len(p_monthly) > 1:
+                                            exact = monthly_summary[monthly_summary["batter_name"].apply(normalize_monthly) == normalize_monthly(pname)]
+                                            if not exact.empty:
+                                                p_monthly = exact
+
+                                        if not p_monthly.empty:
+                                            month_order = ["March/April", "May", "June", "July", "August", "September/October"]
+                                            monthly_rows = []
+                                            for month_label in month_order:
+                                                m_filtered = p_monthly[p_monthly["month_label"] == month_label].copy()
+                                                if split_hand == "vs RHP":
+                                                    m_filtered = m_filtered[m_filtered["p_throws"] == "R"]
+                                                elif split_hand == "vs LHP":
+                                                    m_filtered = m_filtered[m_filtered["p_throws"] == "L"]
+                                                if split_venue == "Home":
+                                                    m_filtered = m_filtered[m_filtered["venue"] == "Home"]
+                                                elif split_venue == "Away":
+                                                    m_filtered = m_filtered[m_filtered["venue"] == "Away"]
+                                                if not m_filtered.empty:
+                                                    combined_m = combine_split_rows(m_filtered)
+                                                    combined_m["Month"] = month_label
+                                                    monthly_rows.append(combined_m)
+
+                                            # Season total row
+                                            total_filtered = p_monthly.copy()
+                                            if split_hand == "vs RHP":
+                                                total_filtered = total_filtered[total_filtered["p_throws"] == "R"]
+                                            elif split_hand == "vs LHP":
+                                                total_filtered = total_filtered[total_filtered["p_throws"] == "L"]
+                                            if split_venue == "Home":
+                                                total_filtered = total_filtered[total_filtered["venue"] == "Home"]
+                                            elif split_venue == "Away":
+                                                total_filtered = total_filtered[total_filtered["venue"] == "Away"]
+                                            if not total_filtered.empty:
+                                                total_row = combine_split_rows(total_filtered)
+                                                total_row["Month"] = "🔢 Season Total"
+                                                monthly_rows.append(total_row)
+
+                                            if monthly_rows:
+                                                monthly_df = pd.DataFrame(monthly_rows)
+                                                monthly_card_stats = ["Month", "PA", "AB", "H", "HR", "BB", "SO", "AVG", "OBP", "SLG", "OPS", "avg_ev", "max_ev", "barrel_pct", "hard_hit_pct"]
+                                                monthly_display_cols = [c for c in monthly_card_stats if c in monthly_df.columns]
+                                                monthly_df = monthly_df[monthly_display_cols].rename(columns={
+                                                    "avg_ev": "Avg EV", "max_ev": "Max EV",
+                                                    "barrel_pct": "Barrel%", "hard_hit_pct": "HardHit%",
+                                                })
+                                                st.dataframe(
+                                                    monthly_df.reset_index(drop=True),
+                                                    use_container_width=True,
+                                                    height=min(500, 50 + len(monthly_df) * 35),
+                                                    column_config={"Month": st.column_config.TextColumn(pinned=True)},
+                                                )
+                                            else:
+                                                st.caption("No monthly data available.")
+                                        else:
+                                            st.caption("No monthly data found for this player.")
+                                    else:
+                                        st.caption("No split summary data loaded.")
+
                             else:
                                 st.warning(f"No percentile data found for {pname}")
 
-
-        elif view_mode == "Radar Comparison":
-            if player_type == "Batters":
-                radar_keys = ["AVG", "OBP", "SLG", "HR", "wOBA", "WAR", "K%", "BB%"]
-            else:
-                radar_keys = ["ERA", "FIP", "WHIP", "K/9", "BB/9", "WAR", "K%"]
-            radar_metrics = {k: trad_metrics[k] for k in radar_keys if k in trad_metrics}
-
-            players_data = []
-            for pname in selected_players:
-                p_trad = trad_pcts[trad_pcts[name_col_trad] == pname]
-                if not p_trad.empty:
-                    vals = {}
-                    for m in radar_metrics.keys():
-                        pct_col = f"{m}_pct"
-                        if pct_col in p_trad.columns:
-                            v = p_trad[pct_col].values[0]
-                            if pd.notna(v):
-                                vals[m] = v
-                    players_data.append({"name": pname, "values": vals})
-
-            if players_data:
-                fig = create_comparison_radar(players_data, radar_metrics)
-                st.plotly_chart(fig, use_container_width=True)
 
         elif view_mode == "Stats Table":
             if split_active and not split_stats.empty and player_type == "Batters":
@@ -633,6 +683,205 @@ if not trad_stats.empty:
                 st.dataframe(filtered.reset_index(drop=True), use_container_width=True,
                              height=min(400, 50 + len(filtered) * 35),
                              column_config={"Name": st.column_config.TextColumn(pinned=True)})
+
+        elif view_mode == "Multi-Year View":
+            # Single player selector
+            my_player = st.selectbox(
+                "Select player to view:",
+                selected_players,
+                key="multiyear_player_select",
+            )
+
+            def normalize_my(s):
+                return unicodedata.normalize("NFD", s).encode("ascii", "ignore").decode("ascii").lower().strip()
+
+            st.markdown(f"### 📆 Multi-Year View — {my_player}")
+
+            my_trad_rows = []  # collect one row per season for the stats table
+            my_chart_years = []  # collect (yr, pcts, available, raw) for grid rendering
+
+            for yr in sorted(AVAILABLE_SEASONS, reverse=True):
+                # --- Load data for this season ---
+                if player_type == "Batters":
+                    yr_trad = load_batting_stats_post(yr) if season_type == "Postseason" else load_batting_stats(yr)
+                    yr_sc_agg = load_statcast_batting_agg(yr)
+                    yr_savant_pcts = load_statcast_batter_percentiles(yr)
+                else:
+                    yr_trad = load_pitching_stats_post(yr) if season_type == "Postseason" else load_pitching_stats(yr)
+                    yr_sc_agg = load_statcast_pitching_agg(yr)
+                    yr_savant_pcts = load_statcast_pitcher_percentiles(yr)
+
+                if yr_trad.empty:
+                    continue
+
+                # Check player exists in this season
+                yr_player_rows = yr_trad[yr_trad[name_col_trad] == my_player]
+                if yr_player_rows.empty:
+                    continue
+
+                # --- Build percentiles for this season ---
+                yr_player_pcts = {}
+                yr_player_raw = {}
+
+                # Traditional percentiles
+                yr_trad_pct_cols = [c for c in trad_metrics.keys() if c in yr_trad.columns]
+                for col in yr_trad_pct_cols:
+                    ascending = col not in invert_metrics
+                    pct_series = yr_trad[col].rank(pct=True, ascending=ascending) * 100
+                    player_idx = yr_trad[yr_trad[name_col_trad] == my_player].index
+                    if not player_idx.empty:
+                        val = pct_series[player_idx[0]]
+                        if pd.notna(val):
+                            yr_player_pcts[col] = val
+                        raw_val = yr_player_rows[col].values[0]
+                        if pd.notna(raw_val):
+                            yr_player_raw[col] = raw_val
+
+                # Apply split filters if active
+                yr_split_active = split_active and player_type == "Batters"
+                if yr_split_active:
+                    yr_summary = load_split_summary(yr)
+                    if not yr_summary.empty:
+                        yr_filtered = yr_summary.copy()
+                        if split_hand == "vs RHP":
+                            yr_filtered = yr_filtered[yr_filtered["p_throws"] == "R"]
+                        elif split_hand == "vs LHP":
+                            yr_filtered = yr_filtered[yr_filtered["p_throws"] == "L"]
+                        if split_venue == "Home":
+                            yr_filtered = yr_filtered[yr_filtered["venue"] == "Home"]
+                        elif split_venue == "Away":
+                            yr_filtered = yr_filtered[yr_filtered["venue"] == "Away"]
+                        if len(split_months) > 0:
+                            yr_filtered = yr_filtered[yr_filtered["month_label"].isin(split_months)]
+
+                        # Build split-based percentiles
+                        yr_split_stats = []
+                        for batter_name, group in yr_filtered.groupby("batter_name"):
+                            combined = combine_split_rows(group)
+                            combined["batter_name"] = batter_name
+                            yr_split_stats.append(combined)
+
+                        if yr_split_stats:
+                            yr_split_df = pd.DataFrame(yr_split_stats)
+                            split_metrics_my = {
+                                "AVG": "Batting Avg", "OBP": "On-Base %", "SLG": "Slugging %",
+                                "OPS": "OPS", "HR": "Home Runs", "BB": "Walks", "SO": "Strikeouts",
+                                "avg_ev": "Exit Velocity", "max_ev": "Max Exit Velo",
+                                "barrel_pct": "Barrel %", "hard_hit_pct": "Hard Hit %",
+                            }
+                            p_split_my = yr_split_df[
+                                yr_split_df["batter_name"].apply(normalize_my).str.contains(
+                                    normalize_my(my_player.split(" ")[-1]), case=False, na=False
+                                )
+                            ]
+                            if len(p_split_my) > 1:
+                                exact = yr_split_df[yr_split_df["batter_name"].apply(normalize_my) == normalize_my(my_player)]
+                                if not exact.empty:
+                                    p_split_my = exact
+
+                            if not p_split_my.empty:
+                                p_split_row = p_split_my.iloc[0]
+                                qualified_split_my = yr_split_df[yr_split_df["PA"] >= min_bbe]
+                                for m in split_metrics_my.keys():
+                                    if m in yr_split_df.columns:
+                                        val = p_split_row[m]
+                                        if pd.notna(val):
+                                            yr_player_raw[m] = val
+                                            ascending = m not in ["SO"]
+                                            if p_split_row["batter_name"] in qualified_split_my["batter_name"].values:
+                                                pct_s = qualified_split_my[m].rank(pct=True, ascending=ascending)
+                                                idx_match = qualified_split_my[qualified_split_my["batter_name"] == p_split_row["batter_name"]].index
+                                                if not idx_match.empty:
+                                                    yr_player_pcts[m] = pct_s[idx_match[0]] * 100
+                                yr_split_active = True
+
+                # Savant percentiles (non-split mode)
+                if not yr_split_active:
+                    if not yr_savant_pcts.empty and "player_name" in yr_savant_pcts.columns:
+                        parts_my = my_player.split(" ", 1)
+                        if len(parts_my) == 2:
+                            savant_name_my = f"{parts_my[1]}, {parts_my[0]}"
+                            p_sv_my = yr_savant_pcts[
+                                yr_savant_pcts["player_name"].apply(normalize_my) == normalize_my(savant_name_my)
+                            ]
+                            if not p_sv_my.empty:
+                                p_sv_my = p_sv_my.iloc[0]
+                                for m in sc_metrics.keys():
+                                    if m in yr_savant_pcts.columns:
+                                        val = p_sv_my[m]
+                                        if pd.notna(val):
+                                            yr_player_pcts[m] = val
+
+                    if not yr_sc_agg.empty and name_col_sc in yr_sc_agg.columns:
+                        parts_my = my_player.split(" ", 1)
+                        if len(parts_my) == 2:
+                            sc_name_my = f"{parts_my[1]}, {parts_my[0]}"
+                            p_sc_my = yr_sc_agg[
+                                yr_sc_agg[name_col_sc].apply(normalize_my) == normalize_my(sc_name_my)
+                            ]
+                            if not p_sc_my.empty:
+                                p_sc_my = p_sc_my.iloc[0]
+                                savant_to_agg_my = {
+                                    "exit_velocity": "avg_hit_speed",
+                                    "max_ev": "max_hit_speed",
+                                    "brl_percent": "brl_percent",
+                                    "hard_hit_percent": "hard_hit_percent",
+                                }
+                                for m in sc_metrics.keys():
+                                    agg_col = savant_to_agg_my.get(m, m)
+                                    if agg_col in yr_sc_agg.columns:
+                                        rv = p_sc_my[agg_col]
+                                        if pd.notna(rv):
+                                            yr_player_raw[m] = rv
+
+                all_labels_my = {**sc_metrics, **trad_metrics}
+                available_my = {k: v for k, v in all_labels_my.items() if k in yr_player_pcts and k in selected_metrics}
+
+                if available_my:
+                    my_chart_years.append((yr, yr_player_pcts, available_my, yr_player_raw))
+
+                # Collect traditional stats row for the table
+                yr_row = yr_player_rows.iloc[0].copy()
+                yr_row["Season"] = yr
+                my_trad_rows.append(yr_row)
+
+            # --- Multi-year grid of charts ---
+            if my_chart_years:
+                cols_per_row_my = 3
+                for i in range(0, len(my_chart_years), cols_per_row_my):
+                    grid_cols = st.columns(cols_per_row_my)
+                    for j, gcol in enumerate(grid_cols):
+                        idx = i + j
+                        if idx >= len(my_chart_years):
+                            break
+                        yr_c, yr_pcts_c, available_c, yr_raw_c = my_chart_years[idx]
+                        with gcol:
+                            fig_my = create_percentile_chart(
+                                f"{my_player} ({yr_c})", yr_pcts_c, available_c,
+                                raw_values=yr_raw_c, compact=True
+                            )
+                            st.plotly_chart(fig_my, use_container_width=True, config={"displayModeBar": False})
+            else:
+                st.info(f"No multi-season chart data found for {my_player}.")
+
+            # --- Multi-year stats table ---
+            if my_trad_rows:
+                st.markdown("#### 📊 Season-by-Season Stats")
+                my_trad_df = pd.DataFrame(my_trad_rows)
+                if player_type == "Batters":
+                    my_card_stats = ["Season", "Team", "G", "AB", "R", "H", "2B", "3B", "HR", "RBI", "SB", "BB", "SO", "AVG", "OBP", "SLG", "OPS"]
+                else:
+                    my_card_stats = ["Season", "Team", "W", "L", "ERA", "G", "GS", "SV", "IP", "H", "ER", "HR", "BB", "SO", "WHIP"]
+                my_display_cols = [c for c in my_card_stats if c in my_trad_df.columns]
+                st.dataframe(
+                    my_trad_df[my_display_cols].reset_index(drop=True),
+                    use_container_width=True,
+                    height=min(500, 50 + len(my_trad_df) * 35),
+                    column_config={"Season": st.column_config.TextColumn(pinned=True)},
+                )
+            else:
+                st.info(f"No multi-season data found for {my_player}.")
+
     else:
         st.info("👆 Select players above to start comparing.")
 else:
