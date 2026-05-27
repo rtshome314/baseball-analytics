@@ -867,6 +867,7 @@ if not trad_stats.empty:
                             break
                         yr_c, yr_pcts_c, available_c, yr_raw_c = my_chart_years[idx]
                         with gcol:
+                            st.markdown(f'<div style="text-align:center;font-weight:700;font-size:1.1em;color:#E87A2C;margin-bottom:2px;">{yr_c}</div>', unsafe_allow_html=True)
                             fig_my = create_percentile_chart(
                                 f"{my_player} ({yr_c})", yr_pcts_c, available_c,
                                 raw_values=yr_raw_c, compact=True
