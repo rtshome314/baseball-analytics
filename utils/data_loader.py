@@ -42,7 +42,9 @@ def get_data_status(season=2025):
     datasets = [
         ("statcast", f"statcast_{season}.parquet"),
         ("batting_stats", f"batting_stats_{season}.parquet"),
+        ("batting_stats_post", f"batting_stats_post_{season}.parquet"),
         ("pitching_stats", f"pitching_stats_{season}.parquet"),
+        ("pitching_stats_post", f"pitching_stats_post_{season}.parquet"),
         ("statcast_batting_agg", f"statcast_batting_agg_{season}.parquet"),
         ("statcast_pitching_agg", f"statcast_pitching_agg_{season}.parquet"),
         ("statcast_batter_pcts", f"statcast_batter_pcts_{season}.parquet"),
@@ -298,11 +300,80 @@ def load_statcast_local(season=2025):
 # TRADITIONAL STATS
 # ===========================================================
 
+def _scrape_br_batting(season, table_id):
+    """Scrape a batting table from Baseball Reference's league batting page."""
+    import requests
+    from bs4 import BeautifulSoup
+    from io import StringIO
+
+    url = f"https://www.baseball-reference.com/leagues/majors/{season}-standard-batting.shtml"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
+    response = requests.get(url, headers=headers, timeout=30)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, "html.parser")
+    table = soup.find("table", {"id": table_id})
+    if table is None:
+        return pd.DataFrame()
+    df = pd.read_html(StringIO(str(table)))[0]
+    # Drop header rows that repeat inside the table
+    df = df[df["Rk"].astype(str).str.strip() != "Rk"].copy()
+    df = df[df["Rk"].astype(str).str.strip() != ""].copy()
+    # Batting table uses "Player", pitching uses "Name" — handle both
+    name_col = "Player" if "Player" in df.columns else "Name"
+    df = df.dropna(subset=[name_col])
+    df[name_col] = df[name_col].str.replace(r"[*#]", "", regex=True).str.strip()
+    # Standardize to "Name"
+    if name_col != "Name":
+        df = df.rename(columns={name_col: "Name"})
+    if "Team" in df.columns and "Tm" not in df.columns:
+        df = df.rename(columns={"Team": "Tm"})
+    # Convert numeric columns
+    skip_cols = {"Name", "Tm", "Lg", "Pos", "Awards"}
+    for col in df.columns:
+        if col not in skip_cols:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+    return df.reset_index(drop=True)
+
+
+def _scrape_br_pitching(season, table_id):
+    """Scrape a pitching table from Baseball Reference's league pitching page."""
+    import requests
+    from bs4 import BeautifulSoup
+    from io import StringIO
+
+    url = f"https://www.baseball-reference.com/leagues/majors/{season}-standard-pitching.shtml"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
+    response = requests.get(url, headers=headers, timeout=30)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, "html.parser")
+    table = soup.find("table", {"id": table_id})
+    if table is None:
+        return pd.DataFrame()
+    df = pd.read_html(StringIO(str(table)))[0]
+    # Drop repeated header rows
+    # Pitching table uses "Name", batting uses "Player" — handle both
+    name_col = "Name" if "Name" in df.columns else "Player"
+    df = df[df["Rk"].astype(str).str.strip() != "Rk"].copy()
+    df = df[df["Rk"].astype(str).str.strip() != ""].copy()
+    df = df.dropna(subset=[name_col])
+    df[name_col] = df[name_col].str.replace(r"[*#]", "", regex=True).str.strip()
+    # Standardize to "Name"
+    if name_col != "Name":
+        df = df.rename(columns={name_col: "Name"})
+    # Standardize team column to "Tm"
+    if "Team" in df.columns and "Tm" not in df.columns:
+        df = df.rename(columns={"Team": "Tm"})
+    skip_cols = {"Name", "Tm", "Lg", "Pos", "Awards"}
+    for col in df.columns:
+        if col not in skip_cols:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+    return df.reset_index(drop=True)
+
+
 def download_batting_stats(season=2025):
-    from pybaseball import batting_stats_bref
     ensure_data_dir()
     try:
-        df = batting_stats_bref(season)
+        df = _scrape_br_batting(season, "players_standard_batting")
         filepath = os.path.join(DATA_DIR, f"batting_stats_{season}.parquet")
         df.to_parquet(filepath, index=False)
         meta = _load_metadata()
@@ -315,11 +386,26 @@ def download_batting_stats(season=2025):
         return pd.DataFrame()
 
 
-def download_pitching_stats(season=2025):
-    from pybaseball import pitching_stats_bref
+def download_batting_stats_post(season=2025):
     ensure_data_dir()
     try:
-        df = pitching_stats_bref(season)
+        df = _scrape_br_batting(season, "players_standard_batting_post")
+        filepath = os.path.join(DATA_DIR, f"batting_stats_post_{season}.parquet")
+        df.to_parquet(filepath, index=False)
+        meta = _load_metadata()
+        meta[f"batting_stats_post_{season}_last_refresh"] = datetime.now().isoformat()
+        meta[f"batting_stats_post_{season}_rows"] = len(df)
+        _save_metadata(meta)
+        return df
+    except Exception as e:
+        st.error(f"Error downloading postseason batting stats: {e}")
+        return pd.DataFrame()
+
+
+def download_pitching_stats(season=2025):
+    ensure_data_dir()
+    try:
+        df = _scrape_br_pitching(season, "players_standard_pitching")
         filepath = os.path.join(DATA_DIR, f"pitching_stats_{season}.parquet")
         df.to_parquet(filepath, index=False)
         meta = _load_metadata()
@@ -329,6 +415,22 @@ def download_pitching_stats(season=2025):
         return df
     except Exception as e:
         st.error(f"Error downloading pitching stats: {e}")
+        return pd.DataFrame()
+
+
+def download_pitching_stats_post(season=2025):
+    ensure_data_dir()
+    try:
+        df = _scrape_br_pitching(season, "players_standard_pitching_post")
+        filepath = os.path.join(DATA_DIR, f"pitching_stats_post_{season}.parquet")
+        df.to_parquet(filepath, index=False)
+        meta = _load_metadata()
+        meta[f"pitching_stats_post_{season}_last_refresh"] = datetime.now().isoformat()
+        meta[f"pitching_stats_post_{season}_rows"] = len(df)
+        _save_metadata(meta)
+        return df
+    except Exception as e:
+        st.error(f"Error downloading postseason pitching stats: {e}")
         return pd.DataFrame()
 
 
@@ -512,8 +614,22 @@ def load_batting_stats(season=2025):
     return pd.DataFrame()
 
 
+def load_batting_stats_post(season=2025):
+    filepath = os.path.join(DATA_DIR, f"batting_stats_post_{season}.parquet")
+    if os.path.exists(filepath):
+        return _fix_name_encoding(pd.read_parquet(filepath))
+    return pd.DataFrame()
+
+
 def load_pitching_stats(season=2025):
     filepath = os.path.join(DATA_DIR, f"pitching_stats_{season}.parquet")
+    if os.path.exists(filepath):
+        return _fix_name_encoding(pd.read_parquet(filepath))
+    return pd.DataFrame()
+
+
+def load_pitching_stats_post(season=2025):
+    filepath = os.path.join(DATA_DIR, f"pitching_stats_post_{season}.parquet")
     if os.path.exists(filepath):
         return _fix_name_encoding(pd.read_parquet(filepath))
     return pd.DataFrame()
@@ -576,9 +692,17 @@ def refresh_all_data(season=2025, full_statcast=False):
         df = download_batting_stats(season)
         results["batting"] = len(df)
 
+    with st.spinner("Downloading postseason batting stats..."):
+        df = download_batting_stats_post(season)
+        results["batting_post"] = len(df)
+
     with st.spinner("Downloading pitching stats..."):
         df = download_pitching_stats(season)
         results["pitching"] = len(df)
+
+    with st.spinner("Downloading postseason pitching stats..."):
+        df = download_pitching_stats_post(season)
+        results["pitching_post"] = len(df)
 
     with st.spinner("Downloading Statcast batting aggregates..."):
         df = download_statcast_batting_agg(season)

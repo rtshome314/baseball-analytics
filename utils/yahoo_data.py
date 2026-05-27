@@ -658,18 +658,21 @@ def build_player_scoring_table(batting_df, pitching_df, rosters):
             name = row.get("Name", "")
             fantasy_team, is_fa = get_fantasy_info(name)
 
-            ip = row.get("IP", 0) or 0
-            so = row.get("SO", 0) or 0
-            bb = row.get("BB", 0) or 0
-            ibb = row.get("IBB", 0) or 0
-            hbp = row.get("HBP", 0) or 0
-            wp = row.get("WP", 0) or 0
-            blk = row.get("BK", 0) or row.get("BLK", 0) or 0
-            gdp = row.get("GDP", 0) or row.get("GIDP", 0) or 0
-            h_allowed = row.get("H", 0) or 0
-            hr_allowed = row.get("HR", 0) or 0
-            doubles_allowed = row.get("2B", 0) or 0
-            triples_allowed = row.get("3B", 0) or 0
+            import math
+            def _safe(v): return 0 if (v is None or (isinstance(v, float) and math.isnan(v))) else v
+
+            ip = _safe(row.get("IP", 0))
+            so = _safe(row.get("SO", 0))
+            bb = _safe(row.get("BB", 0))
+            ibb = _safe(row.get("IBB", 0))
+            hbp = _safe(row.get("HBP", 0))
+            wp = _safe(row.get("WP", 0))
+            blk = _safe(row.get("BK", 0)) or _safe(row.get("BLK", 0))
+            gdp = _safe(row.get("GDP", 0)) or _safe(row.get("GIDP", 0))
+            h_allowed = _safe(row.get("H", 0))
+            hr_allowed = _safe(row.get("HR", 0))
+            doubles_allowed = _safe(row.get("2B", 0))
+            triples_allowed = _safe(row.get("3B", 0))
 
             tb_allowed = h_allowed + doubles_allowed + 2 * triples_allowed + 3 * hr_allowed
 
@@ -733,6 +736,171 @@ def build_team_standings_with_splits(standings, batter_df, pitcher_df):
         s["Pitcher Pts"] = round(team_pitcher_pts.get(team, 0), 1)
 
     return standings
+
+
+# ===========================================================
+# DRAFT RESULTS
+# ===========================================================
+
+def get_draft_results(access_token, league_id):
+    """
+    Fetch full draft results for the league.
+    Handles both snake drafts (<draft_pick>) and auction drafts (<auction_draft_pick>).
+    Returns list of dicts: {pick, round, cost, team_key, team_name, player_key, player_name, position, mlb_team}
+    Player names resolved by cross-referencing all team rosters.
+    Players dropped since the draft will fall back to player_key as their name.
+    """
+    xml = _api_get(access_token, f"league/mlb.l.{league_id}/draftresults")
+    root = _parse_xml(xml)
+    if root is None:
+        return [], xml
+
+    ns = {"y": "http://fantasysports.yahooapis.com/fantasy/v2/base.rng"}
+
+    # Build team_key -> team_name map
+    teams_xml = _api_get(access_token, f"league/mlb.l.{league_id}/teams")
+    teams_root = _parse_xml(teams_xml)
+    team_map = {}
+    if teams_root is not None:
+        for team in teams_root.findall(".//y:team", ns):
+            tk = _find_text(team, "y:team_key", ns)
+            tn = _find_text(team, "y:name", ns)
+            if tk:
+                team_map[tk] = tn
+
+    # Build player_key -> player info map from all rosters
+    player_map = {}
+    if teams_root is not None:
+        for team in teams_root.findall(".//y:team", ns):
+            tk = _find_text(team, "y:team_key", ns)
+            if not tk:
+                continue
+            roster_xml = _api_get(access_token, f"team/{tk}/roster/players")
+            roster_root = _parse_xml(roster_xml)
+            if roster_root is None:
+                continue
+            for player in roster_root.findall(".//y:player", ns):
+                pk = _find_text(player, "y:player_key", ns)
+                name_el = player.find("y:name", ns)
+                pname = _find_text(name_el, "y:full", ns) if name_el else ""
+                display_pos = _find_text(player, "y:display_position", ns)
+                mlb_team = _find_text(player, "y:editorial_team_abbr", ns)
+                if pk:
+                    player_map[pk] = {
+                        "name": pname,
+                        "position": display_pos,
+                        "mlb_team": mlb_team,
+                    }
+
+    picks = []
+    num_teams = len(team_map) or 1
+    is_auction = False
+
+    # Yahoo uses <draft_result> for both auction and snake drafts.
+    # Auction drafts include a <cost> field; snake drafts do not.
+    all_picks = root.findall(".//y:draft_result", ns)
+
+    for pick_el in all_picks:
+        pick_num = int(_find_text(pick_el, "y:pick", ns) or 0)
+        round_num = int(_find_text(pick_el, "y:round", ns) or 0)
+        team_key = _find_text(pick_el, "y:team_key", ns)
+        player_key = _find_text(pick_el, "y:player_key", ns)
+        cost_str = _find_text(pick_el, "y:cost", ns)
+        cost = int(cost_str) if cost_str and cost_str.isdigit() else None
+
+        if cost is not None:
+            is_auction = True
+
+        if round_num == 0 and pick_num > 0 and not is_auction:
+            round_num = ((pick_num - 1) // num_teams) + 1
+
+        player_info = player_map.get(player_key, {})
+        player_name = player_info.get("name") or player_key
+        position = player_info.get("position", "")
+        mlb_team = player_info.get("mlb_team", "")
+
+        picks.append({
+            "pick": pick_num,
+            "round": round_num if not is_auction else None,
+            "cost": cost,
+            "team_key": team_key,
+            "team_name": team_map.get(team_key, team_key),
+            "player_key": player_key,
+            "player_name": player_name,
+            "position": position,
+            "mlb_team": mlb_team,
+            "is_auction": is_auction,
+        })
+
+    return sorted(picks, key=lambda x: x["cost"] if is_auction else x["pick"], reverse=is_auction), xml
+
+
+# ===========================================================
+# CURRENT / ACTIVE MATCHUPS
+# ===========================================================
+
+def get_current_matchups(access_token, league_id, week=None):
+    """
+    Fetch the current (or specified) week's matchup pairings and scores from Yahoo.
+    Returns list of dicts, each representing one matchup:
+    {
+        week, matchup_index,
+        team1_key, team1_name, team1_pts,
+        team2_key, team2_name, team2_pts,
+        status, is_tied, winner_team_key
+    }
+    """
+    endpoint = f"league/mlb.l.{league_id}/scoreboard"
+    if week:
+        endpoint += f";week={week}"
+
+    xml = _api_get(access_token, endpoint)
+    root = _parse_xml(xml)
+    if root is None:
+        return []
+
+    ns = {"y": "http://fantasysports.yahooapis.com/fantasy/v2/base.rng"}
+    matchups = []
+
+    for i, matchup_el in enumerate(root.findall(".//y:matchup", ns)):
+        week_num = _find_text(matchup_el, "y:week", ns)
+        status = _find_text(matchup_el, "y:status", ns)
+        is_tied = _find_text(matchup_el, "y:is_tied", ns)
+        winner_key = _find_text(matchup_el, "y:winner_team_key", ns)
+
+        teams_el = matchup_el.findall(".//y:team", ns)
+        if len(teams_el) < 2:
+            continue
+
+        def extract_team(team_el):
+            tk = _find_text(team_el, "y:team_key", ns)
+            tn = _find_text(team_el, "y:name", ns)
+            pts_el = team_el.find(".//y:team_points/y:total", ns)
+            pts = float(pts_el.text) if pts_el is not None and pts_el.text else 0.0
+            proj_el = team_el.find(".//y:team_projected_points/y:total", ns)
+            proj = float(proj_el.text) if proj_el is not None and proj_el.text else 0.0
+            return {"key": tk, "name": tn, "pts": pts, "projected": proj}
+
+        t1 = extract_team(teams_el[0])
+        t2 = extract_team(teams_el[1])
+
+        matchups.append({
+            "week": int(week_num) if week_num else None,
+            "matchup_index": i,
+            "team1_key": t1["key"],
+            "team1_name": t1["name"],
+            "team1_pts": t1["pts"],
+            "team1_projected": t1["projected"],
+            "team2_key": t2["key"],
+            "team2_name": t2["name"],
+            "team2_pts": t2["pts"],
+            "team2_projected": t2["projected"],
+            "status": status,
+            "is_tied": is_tied == "1",
+            "winner_team_key": winner_key,
+        })
+
+    return matchups
 
 
 # ===========================================================

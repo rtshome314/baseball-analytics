@@ -53,6 +53,9 @@ def _refresh_token(token_data, client_id, client_secret):
         _save_token(new_token)
         return new_token
     else:
+        # Refresh failed — delete the bad token so the app prompts re-auth cleanly
+        if os.path.exists(TOKEN_FILE):
+            os.remove(TOKEN_FILE)
         return None
 
 
@@ -110,7 +113,15 @@ def render_auth_flow(client_id, client_secret):
     if token:
         return True
 
-    st.warning("⚠️ You need to connect your Yahoo account first.")
+    # Check if we just had a refresh failure (token file gone but session flag set)
+    if not os.path.exists(TOKEN_FILE):
+        if st.session_state.get("_yahoo_was_authed"):
+            st.warning("⚠️ Your Yahoo session expired and could not be refreshed. Please reconnect below.")
+            st.session_state.pop("_yahoo_was_authed", None)
+        else:
+            st.warning("⚠️ You need to connect your Yahoo account first.")
+    else:
+        st.warning("⚠️ You need to connect your Yahoo account first.")
 
     auth_url = get_auth_url(client_id)
     st.markdown(f"**Step 1:** [Click here to authorize with Yahoo]({auth_url})")
@@ -126,6 +137,7 @@ def render_auth_flow(client_id, client_secret):
             if code:
                 token_data = exchange_code_for_token(code, client_id, client_secret)
                 if token_data:
+                    st.session_state["_yahoo_was_authed"] = True
                     st.success("✅ Successfully connected to Yahoo!")
                     st.rerun()
             else:

@@ -4,7 +4,7 @@
     "season": "2026",
     "num_teams": "12",
     "league_key": "469.l.123192",
-    "current_week": "6",
+    "current_week": "10",
     "start_week": "1"
   },
   "teams": [
@@ -116,16 +116,17 @@
       "mlb_team": "ATL",
       "status": "Active"
     },
-    "dansby swanson": {
-      "yahoo_name": "Dansby Swanson",
+    "colt emerson": {
+      "yahoo_name": "Colt Emerson",
       "fantasy_team": "I never liked jobe",
       "team_key": "469.l.123192.t.1",
       "positions": [
+        "3B",
         "SS",
         "Util"
       ],
-      "mlb_team": "CHC",
-      "status": "DTD"
+      "mlb_team": "SEA",
+      "status": "Active"
     },
     "yordan alvarez": {
       "yahoo_name": "Yordan Alvarez",
@@ -149,15 +150,15 @@
       "mlb_team": "CHC",
       "status": "Active"
     },
-    "taylor ward": {
-      "yahoo_name": "Taylor Ward",
+    "chase delauter": {
+      "yahoo_name": "Chase DeLauter",
       "fantasy_team": "I never liked jobe",
       "team_key": "469.l.123192.t.1",
       "positions": [
         "OF",
         "Util"
       ],
-      "mlb_team": "BAL",
+      "mlb_team": "CLE",
       "status": "Active"
     },
     "pete alonso": {
@@ -171,6 +172,17 @@
       "mlb_team": "BAL",
       "status": "Active"
     },
+    "dansby swanson": {
+      "yahoo_name": "Dansby Swanson",
+      "fantasy_team": "I never liked jobe",
+      "team_key": "469.l.123192.t.1",
+      "positions": [
+        "SS",
+        "Util"
+      ],
+      "mlb_team": "CHC",
+      "status": "Active"
+    },
     "bryan reynolds": {
       "yahoo_name": "Bryan Reynolds",
       "fantasy_team": "I never liked jobe",
@@ -182,25 +194,15 @@
       "mlb_team": "PIT",
       "status": "Active"
     },
-    "chase delauter": {
-      "yahoo_name": "Chase DeLauter",
+    "taylor ward": {
+      "yahoo_name": "Taylor Ward",
       "fantasy_team": "I never liked jobe",
       "team_key": "469.l.123192.t.1",
       "positions": [
         "OF",
         "Util"
       ],
-      "mlb_team": "CLE",
-      "status": "Active"
-    },
-    "tarik skubal": {
-      "yahoo_name": "Tarik Skubal",
-      "fantasy_team": "I never liked jobe",
-      "team_key": "469.l.123192.t.1",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "DET",
+      "mlb_team": "BAL",
       "status": "Active"
     },
     "george kirby": {
@@ -213,34 +215,14 @@
       "mlb_team": "SEA",
       "status": "Active"
     },
-    "randy vasquez": {
-      "yahoo_name": "Randy V\u00e1squez",
+    "merrill kelly": {
+      "yahoo_name": "Merrill Kelly",
       "fantasy_team": "I never liked jobe",
       "team_key": "469.l.123192.t.1",
       "positions": [
         "P"
       ],
-      "mlb_team": "SD",
-      "status": "Active"
-    },
-    "kris bubic": {
-      "yahoo_name": "Kris Bubic",
-      "fantasy_team": "I never liked jobe",
-      "team_key": "469.l.123192.t.1",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "KC",
-      "status": "Active"
-    },
-    "connor prielipp": {
-      "yahoo_name": "Connor Prielipp",
-      "fantasy_team": "I never liked jobe",
-      "team_key": "469.l.123192.t.1",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "MIN",
+      "mlb_team": "AZ",
       "status": "Active"
     },
     "trey yesavage": {
@@ -253,6 +235,16 @@
       "mlb_team": "TOR",
       "status": "Active"
     },
+    "jack leiter": {
+      "yahoo_name": "Jack Leiter",
+      "fantasy_team": "I never liked jobe",
+      "team_key": "469.l.123192.t.1",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "TEX",
+      "status": "Active"
+    },
     "shane mcclanahan": {
       "yahoo_name": "Shane McClanahan",
       "fantasy_team": "I never liked jobe",
@@ -261,6 +253,16 @@
         "P"
       ],
       "mlb_team": "TB",
+      "status": "Active"
+    },
+    "bryce miller": {
+      "yahoo_name": "Bryce Miller",
+      "fantasy_team": "I never liked jobe",
+      "team_key": "469.l.123192.t.1",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "SEA",
       "status": "Active"
     },
     "sandy alcantara": {
@@ -273,14 +275,14 @@
       "mlb_team": "MIA",
       "status": "Active"
     },
-    "merrill kelly": {
-      "yahoo_name": "Merrill Kelly",
+    "randy vasquez": {
+      "yahoo_name": "Randy V\u00e1squez",
       "fantasy_team": "I never liked jobe",
       "team_key": "469.l.123192.t.1",
       "positions": [
         "P"
       ],
-      "mlb_team": "AZ",
+      "mlb_team": "SD",
       "status": "Active"
     },
     "spencer arrighetti": {
@@ -293,18 +295,27 @@
       "mlb_team": "HOU",
       "status": "Active"
     },
-    "jordan westburg": {
-      "yahoo_name": "Jordan Westburg",
+    "kris bubic": {
+      "yahoo_name": "Kris Bubic",
       "fantasy_team": "I never liked jobe",
       "team_key": "469.l.123192.t.1",
       "positions": [
-        "2B",
-        "3B",
-        "Util",
+        "P",
         "IL"
       ],
-      "mlb_team": "BAL",
-      "status": "IL60"
+      "mlb_team": "KC",
+      "status": "IL15"
+    },
+    "tarik skubal": {
+      "yahoo_name": "Tarik Skubal",
+      "fantasy_team": "I never liked jobe",
+      "team_key": "469.l.123192.t.1",
+      "positions": [
+        "P",
+        "IL"
+      ],
+      "mlb_team": "DET",
+      "status": "IL15"
     },
     "hunter brown": {
       "yahoo_name": "Hunter Brown",
@@ -315,18 +326,7 @@
         "IL"
       ],
       "mlb_team": "HOU",
-      "status": "IL15"
-    },
-    "bryce miller": {
-      "yahoo_name": "Bryce Miller",
-      "fantasy_team": "I never liked jobe",
-      "team_key": "469.l.123192.t.1",
-      "positions": [
-        "P",
-        "IL"
-      ],
-      "mlb_team": "SEA",
-      "status": "IL15"
+      "status": "IL60"
     },
     "jared jones": {
       "yahoo_name": "Jared Jones",
@@ -362,16 +362,16 @@
       "mlb_team": "SF",
       "status": "Active"
     },
-    "jazz chisholm jr.": {
-      "yahoo_name": "Jazz Chisholm Jr.",
+    "fernando tatis jr.": {
+      "yahoo_name": "Fernando Tatis Jr.",
       "fantasy_team": "Las Vegas Vipers",
       "team_key": "469.l.123192.t.2",
       "positions": [
         "2B",
-        "3B",
+        "OF",
         "Util"
       ],
-      "mlb_team": "NYY",
+      "mlb_team": "SD",
       "status": "Active"
     },
     "junior caminero": {
@@ -396,30 +396,6 @@
       "mlb_team": "PHI",
       "status": "Active"
     },
-    "jackson chourio": {
-      "yahoo_name": "Jackson Chourio",
-      "fantasy_team": "Las Vegas Vipers",
-      "team_key": "469.l.123192.t.2",
-      "positions": [
-        "OF",
-        "Util",
-        "IL"
-      ],
-      "mlb_team": "MIL",
-      "status": "IL10"
-    },
-    "fernando tatis jr.": {
-      "yahoo_name": "Fernando Tatis Jr.",
-      "fantasy_team": "Las Vegas Vipers",
-      "team_key": "469.l.123192.t.2",
-      "positions": [
-        "2B",
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "SD",
-      "status": "Active"
-    },
     "kyle tucker": {
       "yahoo_name": "Kyle Tucker",
       "fantasy_team": "Las Vegas Vipers",
@@ -429,6 +405,28 @@
         "Util"
       ],
       "mlb_team": "LAD",
+      "status": "Active"
+    },
+    "jarren duran": {
+      "yahoo_name": "Jarren Duran",
+      "fantasy_team": "Las Vegas Vipers",
+      "team_key": "469.l.123192.t.2",
+      "positions": [
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "BOS",
+      "status": "Active"
+    },
+    "jackson chourio": {
+      "yahoo_name": "Jackson Chourio",
+      "fantasy_team": "Las Vegas Vipers",
+      "team_key": "469.l.123192.t.2",
+      "positions": [
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "MIL",
       "status": "Active"
     },
     "cj abrams": {
@@ -442,6 +440,28 @@
       "mlb_team": "WSH",
       "status": "Active"
     },
+    "xander bogaerts": {
+      "yahoo_name": "Xander Bogaerts",
+      "fantasy_team": "Las Vegas Vipers",
+      "team_key": "469.l.123192.t.2",
+      "positions": [
+        "SS",
+        "Util"
+      ],
+      "mlb_team": "SD",
+      "status": "Active"
+    },
+    "tj rumfield": {
+      "yahoo_name": "TJ Rumfield",
+      "fantasy_team": "Las Vegas Vipers",
+      "team_key": "469.l.123192.t.2",
+      "positions": [
+        "1B",
+        "Util"
+      ],
+      "mlb_team": "COL",
+      "status": "DTD"
+    },
     "reid detmers": {
       "yahoo_name": "Reid Detmers",
       "fantasy_team": "Las Vegas Vipers",
@@ -450,26 +470,6 @@
         "P"
       ],
       "mlb_team": "LAA",
-      "status": "Active"
-    },
-    "bubba chandler": {
-      "yahoo_name": "Bubba Chandler",
-      "fantasy_team": "Las Vegas Vipers",
-      "team_key": "469.l.123192.t.2",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "PIT",
-      "status": "Active"
-    },
-    "matthew boyd": {
-      "yahoo_name": "Matthew Boyd",
-      "fantasy_team": "Las Vegas Vipers",
-      "team_key": "469.l.123192.t.2",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "CHC",
       "status": "Active"
     },
     "chad patrick": {
@@ -492,6 +492,26 @@
       "mlb_team": "TB",
       "status": "Active"
     },
+    "bubba chandler": {
+      "yahoo_name": "Bubba Chandler",
+      "fantasy_team": "Las Vegas Vipers",
+      "team_key": "469.l.123192.t.2",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "PIT",
+      "status": "Active"
+    },
+    "stephen kolek": {
+      "yahoo_name": "Stephen Kolek",
+      "fantasy_team": "Las Vegas Vipers",
+      "team_key": "469.l.123192.t.2",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "KC",
+      "status": "Active"
+    },
     "connelly early": {
       "yahoo_name": "Connelly Early",
       "fantasy_team": "Las Vegas Vipers",
@@ -512,6 +532,16 @@
       "mlb_team": "PHI",
       "status": "Active"
     },
+    "braxton garrett": {
+      "yahoo_name": "Braxton Garrett",
+      "fantasy_team": "Las Vegas Vipers",
+      "team_key": "469.l.123192.t.2",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "MIA",
+      "status": "NA"
+    },
     "sean manaea": {
       "yahoo_name": "Sean Manaea",
       "fantasy_team": "Las Vegas Vipers",
@@ -531,6 +561,28 @@
       ],
       "mlb_team": "KC",
       "status": "Active"
+    },
+    "tyler glasnow": {
+      "yahoo_name": "Tyler Glasnow",
+      "fantasy_team": "Las Vegas Vipers",
+      "team_key": "469.l.123192.t.2",
+      "positions": [
+        "P",
+        "IL"
+      ],
+      "mlb_team": "LAD",
+      "status": "IL15"
+    },
+    "matthew boyd": {
+      "yahoo_name": "Matthew Boyd",
+      "fantasy_team": "Las Vegas Vipers",
+      "team_key": "469.l.123192.t.2",
+      "positions": [
+        "P",
+        "IL"
+      ],
+      "mlb_team": "CHC",
+      "status": "IL15"
     },
     "mick abel": {
       "yahoo_name": "Mick Abel",
@@ -563,7 +615,7 @@
         "Util"
       ],
       "mlb_team": "KC",
-      "status": "DTD"
+      "status": "Active"
     },
     "brandon lowe": {
       "yahoo_name": "Brandon Lowe",
@@ -612,29 +664,6 @@
       "mlb_team": "SEA",
       "status": "Active"
     },
-    "tyler soderstrom": {
-      "yahoo_name": "Tyler Soderstrom",
-      "fantasy_team": "WV Black Bears",
-      "team_key": "469.l.123192.t.3",
-      "positions": [
-        "1B",
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "ATH",
-      "status": "DTD"
-    },
-    "chandler simpson": {
-      "yahoo_name": "Chandler Simpson",
-      "fantasy_team": "WV Black Bears",
-      "team_key": "469.l.123192.t.3",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "TB",
-      "status": "Active"
-    },
     "alec burleson": {
       "yahoo_name": "Alec Burleson",
       "fantasy_team": "WV Black Bears",
@@ -645,6 +674,29 @@
         "Util"
       ],
       "mlb_team": "STL",
+      "status": "Active"
+    },
+    "jackson merrill": {
+      "yahoo_name": "Jackson Merrill",
+      "fantasy_team": "WV Black Bears",
+      "team_key": "469.l.123192.t.3",
+      "positions": [
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "SD",
+      "status": "Active"
+    },
+    "colson montgomery": {
+      "yahoo_name": "Colson Montgomery",
+      "fantasy_team": "WV Black Bears",
+      "team_key": "469.l.123192.t.3",
+      "positions": [
+        "3B",
+        "SS",
+        "Util"
+      ],
+      "mlb_team": "CWS",
       "status": "Active"
     },
     "willson contreras": {
@@ -658,6 +710,17 @@
       "mlb_team": "BOS",
       "status": "Active"
     },
+    "chandler simpson": {
+      "yahoo_name": "Chandler Simpson",
+      "fantasy_team": "WV Black Bears",
+      "team_key": "469.l.123192.t.3",
+      "positions": [
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "TB",
+      "status": "Active"
+    },
     "michael harris ii": {
       "yahoo_name": "Michael Harris II",
       "fantasy_team": "WV Black Bears",
@@ -669,42 +732,8 @@
       "mlb_team": "ATL",
       "status": "Active"
     },
-    "agustin ramirez": {
-      "yahoo_name": "Agust\u00edn Ram\u00edrez",
-      "fantasy_team": "WV Black Bears",
-      "team_key": "469.l.123192.t.3",
-      "positions": [
-        "C",
-        "Util"
-      ],
-      "mlb_team": "MIA",
-      "status": "Active"
-    },
-    "nolan arenado": {
-      "yahoo_name": "Nolan Arenado",
-      "fantasy_team": "WV Black Bears",
-      "team_key": "469.l.123192.t.3",
-      "positions": [
-        "3B",
-        "Util"
-      ],
-      "mlb_team": "AZ",
-      "status": "Active"
-    },
-    "alec bohm": {
-      "yahoo_name": "Alec Bohm",
-      "fantasy_team": "WV Black Bears",
-      "team_key": "469.l.123192.t.3",
-      "positions": [
-        "1B",
-        "3B",
-        "Util"
-      ],
-      "mlb_team": "PHI",
-      "status": "Active"
-    },
-    "colson montgomery": {
-      "yahoo_name": "Colson Montgomery",
+    "bo bichette": {
+      "yahoo_name": "Bo Bichette",
       "fantasy_team": "WV Black Bears",
       "team_key": "469.l.123192.t.3",
       "positions": [
@@ -712,7 +741,7 @@
         "SS",
         "Util"
       ],
-      "mlb_team": "CWS",
+      "mlb_team": "NYM",
       "status": "Active"
     },
     "cristopher sanchez": {
@@ -735,35 +764,67 @@
       "mlb_team": "NYM",
       "status": "Active"
     },
-    "jacob degrom": {
-      "yahoo_name": "Jacob deGrom",
+    "eduardo rodriguez": {
+      "yahoo_name": "Eduardo Rodriguez",
       "fantasy_team": "WV Black Bears",
       "team_key": "469.l.123192.t.3",
       "positions": [
         "P"
       ],
-      "mlb_team": "TEX",
+      "mlb_team": "AZ",
       "status": "Active"
+    },
+    "nick lodolo": {
+      "yahoo_name": "Nick Lodolo",
+      "fantasy_team": "WV Black Bears",
+      "team_key": "469.l.123192.t.3",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "CIN",
+      "status": "Active"
+    },
+    "andrew abbott": {
+      "yahoo_name": "Andrew Abbott",
+      "fantasy_team": "WV Black Bears",
+      "team_key": "469.l.123192.t.3",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "CIN",
+      "status": "Active"
+    },
+    "trevor rogers": {
+      "yahoo_name": "Trevor Rogers",
+      "fantasy_team": "WV Black Bears",
+      "team_key": "469.l.123192.t.3",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "BAL",
+      "status": "Active"
+    },
+    "blake snell": {
+      "yahoo_name": "Blake Snell",
+      "fantasy_team": "WV Black Bears",
+      "team_key": "469.l.123192.t.3",
+      "positions": [
+        "P",
+        "IL"
+      ],
+      "mlb_team": "LAD",
+      "status": "IL15"
     },
     "brandon woodruff": {
       "yahoo_name": "Brandon Woodruff",
       "fantasy_team": "WV Black Bears",
       "team_key": "469.l.123192.t.3",
       "positions": [
-        "P"
+        "P",
+        "IL"
       ],
       "mlb_team": "MIL",
-      "status": "Active"
-    },
-    "eric lauer": {
-      "yahoo_name": "Eric Lauer",
-      "fantasy_team": "WV Black Bears",
-      "team_key": "469.l.123192.t.3",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "TOR",
-      "status": "Active"
+      "status": "IL15"
     },
     "anthony santander": {
       "yahoo_name": "Anthony Santander",
@@ -799,28 +860,6 @@
       "mlb_team": "ATL",
       "status": "IL60"
     },
-    "nick lodolo": {
-      "yahoo_name": "Nick Lodolo",
-      "fantasy_team": "WV Black Bears",
-      "team_key": "469.l.123192.t.3",
-      "positions": [
-        "P",
-        "IL"
-      ],
-      "mlb_team": "CIN",
-      "status": "IL15"
-    },
-    "blake snell": {
-      "yahoo_name": "Blake Snell",
-      "fantasy_team": "WV Black Bears",
-      "team_key": "469.l.123192.t.3",
-      "positions": [
-        "P",
-        "IL"
-      ],
-      "mlb_team": "LAD",
-      "status": "IL15"
-    },
     "shea langeliers": {
       "yahoo_name": "Shea Langeliers",
       "fantasy_team": "Short Porch Pirates",
@@ -838,6 +877,8 @@
       "team_key": "469.l.123192.t.4",
       "positions": [
         "1B",
+        "2B",
+        "3B",
         "Util"
       ],
       "mlb_team": "CIN",
@@ -900,15 +941,15 @@
       "mlb_team": "ATL",
       "status": "Active"
     },
-    "ian happ": {
-      "yahoo_name": "Ian Happ",
+    "ryan waldschmidt": {
+      "yahoo_name": "Ryan Waldschmidt",
       "fantasy_team": "Short Porch Pirates",
       "team_key": "469.l.123192.t.4",
       "positions": [
         "OF",
         "Util"
       ],
-      "mlb_team": "CHC",
+      "mlb_team": "AZ",
       "status": "Active"
     },
     "geraldo perdomo": {
@@ -920,6 +961,28 @@
         "Util"
       ],
       "mlb_team": "AZ",
+      "status": "Active"
+    },
+    "brent rooker": {
+      "yahoo_name": "Brent Rooker",
+      "fantasy_team": "Short Porch Pirates",
+      "team_key": "469.l.123192.t.4",
+      "positions": [
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "ATH",
+      "status": "Active"
+    },
+    "ian happ": {
+      "yahoo_name": "Ian Happ",
+      "fantasy_team": "Short Porch Pirates",
+      "team_key": "469.l.123192.t.4",
+      "positions": [
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "CHC",
       "status": "Active"
     },
     "maikel garcia": {
@@ -936,35 +999,14 @@
       "mlb_team": "KC",
       "status": "Active"
     },
-    "cam smith": {
-      "yahoo_name": "Cam Smith",
-      "fantasy_team": "Short Porch Pirates",
-      "team_key": "469.l.123192.t.4",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "HOU",
-      "status": "Active"
-    },
-    "cole ragans": {
-      "yahoo_name": "Cole Ragans",
+    "max meyer": {
+      "yahoo_name": "Max Meyer",
       "fantasy_team": "Short Porch Pirates",
       "team_key": "469.l.123192.t.4",
       "positions": [
         "P"
       ],
-      "mlb_team": "KC",
-      "status": "Active"
-    },
-    "jeffrey springs": {
-      "yahoo_name": "Jeffrey Springs",
-      "fantasy_team": "Short Porch Pirates",
-      "team_key": "469.l.123192.t.4",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "ATH",
+      "mlb_team": "MIA",
       "status": "Active"
     },
     "landen roupp": {
@@ -977,54 +1019,14 @@
       "mlb_team": "SF",
       "status": "Active"
     },
-    "tyler mahle": {
-      "yahoo_name": "Tyler Mahle",
+    "jack kochanowicz": {
+      "yahoo_name": "Jack Kochanowicz",
       "fantasy_team": "Short Porch Pirates",
       "team_key": "469.l.123192.t.4",
       "positions": [
         "P"
       ],
-      "mlb_team": "SF",
-      "status": "Active"
-    },
-    "max meyer": {
-      "yahoo_name": "Max Meyer",
-      "fantasy_team": "Short Porch Pirates",
-      "team_key": "469.l.123192.t.4",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "MIA",
-      "status": "Active"
-    },
-    "rhett lowder": {
-      "yahoo_name": "Rhett Lowder",
-      "fantasy_team": "Short Porch Pirates",
-      "team_key": "469.l.123192.t.4",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "CIN",
-      "status": "Active"
-    },
-    "joey cantillo": {
-      "yahoo_name": "Joey Cantillo",
-      "fantasy_team": "Short Porch Pirates",
-      "team_key": "469.l.123192.t.4",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "CLE",
-      "status": "Active"
-    },
-    "eduardo rodriguez": {
-      "yahoo_name": "Eduardo Rodriguez",
-      "fantasy_team": "Short Porch Pirates",
-      "team_key": "469.l.123192.t.4",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "AZ",
+      "mlb_team": "LAA",
       "status": "Active"
     },
     "ryne nelson": {
@@ -1037,6 +1039,16 @@
       "mlb_team": "AZ",
       "status": "Active"
     },
+    "walbert urena": {
+      "yahoo_name": "Walbert Ure\u00f1a",
+      "fantasy_team": "Short Porch Pirates",
+      "team_key": "469.l.123192.t.4",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "LAA",
+      "status": "Active"
+    },
     "janson junk": {
       "yahoo_name": "Janson Junk",
       "fantasy_team": "Short Porch Pirates",
@@ -1047,13 +1059,32 @@
       "mlb_team": "MIA",
       "status": "Active"
     },
-    "brent rooker": {
-      "yahoo_name": "Brent Rooker",
+    "j.t. ginn": {
+      "yahoo_name": "J.T. Ginn",
       "fantasy_team": "Short Porch Pirates",
       "team_key": "469.l.123192.t.4",
       "positions": [
-        "OF",
-        "Util"
+        "P"
+      ],
+      "mlb_team": "ATH",
+      "status": "Active"
+    },
+    "joey cantillo": {
+      "yahoo_name": "Joey Cantillo",
+      "fantasy_team": "Short Porch Pirates",
+      "team_key": "469.l.123192.t.4",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "CLE",
+      "status": "Active"
+    },
+    "jeffrey springs": {
+      "yahoo_name": "Jeffrey Springs",
+      "fantasy_team": "Short Porch Pirates",
+      "team_key": "469.l.123192.t.4",
+      "positions": [
+        "P"
       ],
       "mlb_team": "ATH",
       "status": "Active"
@@ -1071,16 +1102,27 @@
       "mlb_team": "AZ",
       "status": "IL60"
     },
-    "cody ponce": {
-      "yahoo_name": "Cody Ponce",
+    "rhett lowder": {
+      "yahoo_name": "Rhett Lowder",
       "fantasy_team": "Short Porch Pirates",
       "team_key": "469.l.123192.t.4",
       "positions": [
         "P",
         "IL"
       ],
-      "mlb_team": "TOR",
-      "status": "IL60"
+      "mlb_team": "CIN",
+      "status": "IL15"
+    },
+    "cole ragans": {
+      "yahoo_name": "Cole Ragans",
+      "fantasy_team": "Short Porch Pirates",
+      "team_key": "469.l.123192.t.4",
+      "positions": [
+        "P",
+        "IL"
+      ],
+      "mlb_team": "KC",
+      "status": "IL15"
     },
     "joe musgrove": {
       "yahoo_name": "Joe Musgrove",
@@ -1091,7 +1133,7 @@
         "IL"
       ],
       "mlb_team": "SD",
-      "status": "IL15"
+      "status": "IL60"
     },
     "corbin burnes": {
       "yahoo_name": "Corbin Burnes",
@@ -1104,17 +1146,6 @@
       "mlb_team": "AZ",
       "status": "IL60"
     },
-    "francisco alvarez": {
-      "yahoo_name": "Francisco Alvarez",
-      "fantasy_team": "Munson's Mustache",
-      "team_key": "469.l.123192.t.5",
-      "positions": [
-        "C",
-        "Util"
-      ],
-      "mlb_team": "NYM",
-      "status": "Active"
-    },
     "ben rice": {
       "yahoo_name": "Ben Rice",
       "fantasy_team": "Munson's Mustache",
@@ -1122,20 +1153,6 @@
       "positions": [
         "C",
         "1B",
-        "Util"
-      ],
-      "mlb_team": "NYY",
-      "status": "Active"
-    },
-    "jose caballero": {
-      "yahoo_name": "Jos\u00e9 Caballero",
-      "fantasy_team": "Munson's Mustache",
-      "team_key": "469.l.123192.t.5",
-      "positions": [
-        "2B",
-        "3B",
-        "SS",
-        "OF",
         "Util"
       ],
       "mlb_team": "NYY",
@@ -1151,6 +1168,32 @@
         "Util"
       ],
       "mlb_team": "TOR",
+      "status": "Active"
+    },
+    "ceddanne rafaela": {
+      "yahoo_name": "Ceddanne Rafaela",
+      "fantasy_team": "Munson's Mustache",
+      "team_key": "469.l.123192.t.5",
+      "positions": [
+        "2B",
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "BOS",
+      "status": "Active"
+    },
+    "jose caballero": {
+      "yahoo_name": "Jos\u00e9 Caballero",
+      "fantasy_team": "Munson's Mustache",
+      "team_key": "469.l.123192.t.5",
+      "positions": [
+        "2B",
+        "3B",
+        "SS",
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "NYY",
       "status": "Active"
     },
     "elly de la cruz": {
@@ -1175,17 +1218,6 @@
       "mlb_team": "PHI",
       "status": "Active"
     },
-    "trent grisham": {
-      "yahoo_name": "Trent Grisham",
-      "fantasy_team": "Munson's Mustache",
-      "team_key": "469.l.123192.t.5",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "NYY",
-      "status": "Active"
-    },
     "pete crow armstrong": {
       "yahoo_name": "Pete Crow-Armstrong",
       "fantasy_team": "Munson's Mustache",
@@ -1197,38 +1229,61 @@
       "mlb_team": "CHC",
       "status": "Active"
     },
-    "luis robert jr.": {
-      "yahoo_name": "Luis Robert Jr.",
+    "ramon laureano": {
+      "yahoo_name": "Ram\u00f3n Laureano",
       "fantasy_team": "Munson's Mustache",
       "team_key": "469.l.123192.t.5",
       "positions": [
         "OF",
         "Util"
       ],
-      "mlb_team": "NYM",
-      "status": "DTD"
+      "mlb_team": "SD",
+      "status": "Active"
     },
-    "giancarlo stanton": {
-      "yahoo_name": "Giancarlo Stanton",
+    "eugenio suarez": {
+      "yahoo_name": "Eugenio Su\u00e1rez",
       "fantasy_team": "Munson's Mustache",
       "team_key": "469.l.123192.t.5",
-      "positions": [
-        "OF",
-        "Util",
-        "IL"
-      ],
-      "mlb_team": "NYY",
-      "status": "IL10"
-    },
-    "max muncy": {
-      "yahoo_name": "Max Muncy",
-      "fantasy_team": "Carbon Black",
-      "team_key": "469.l.123192.t.7",
       "positions": [
         "3B",
         "Util"
       ],
-      "mlb_team": "LAD",
+      "mlb_team": "CIN",
+      "status": "Active"
+    },
+    "trent grisham": {
+      "yahoo_name": "Trent Grisham",
+      "fantasy_team": "Munson's Mustache",
+      "team_key": "469.l.123192.t.5",
+      "positions": [
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "NYY",
+      "status": "Active"
+    },
+    "jackson holliday": {
+      "yahoo_name": "Jackson Holliday",
+      "fantasy_team": "Munson's Mustache",
+      "team_key": "469.l.123192.t.5",
+      "positions": [
+        "2B",
+        "SS",
+        "Util"
+      ],
+      "mlb_team": "BAL",
+      "status": "Active"
+    },
+    "angel martinez": {
+      "yahoo_name": "Angel Mart\u00ednez",
+      "fantasy_team": "Munson's Mustache",
+      "team_key": "469.l.123192.t.5",
+      "positions": [
+        "2B",
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "CLE",
       "status": "Active"
     },
     "yoshinobu yamamoto": {
@@ -1261,14 +1316,24 @@
       "mlb_team": "CHC",
       "status": "Active"
     },
-    "bryce elder": {
-      "yahoo_name": "Bryce Elder",
+    "kyle bradish": {
+      "yahoo_name": "Kyle Bradish",
       "fantasy_team": "Munson's Mustache",
       "team_key": "469.l.123192.t.5",
       "positions": [
         "P"
       ],
-      "mlb_team": "ATL",
+      "mlb_team": "BAL",
+      "status": "Active"
+    },
+    "kyle harrison": {
+      "yahoo_name": "Kyle Harrison",
+      "fantasy_team": "Munson's Mustache",
+      "team_key": "469.l.123192.t.5",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "MIL",
       "status": "Active"
     },
     "justin wrobleski": {
@@ -1281,24 +1346,14 @@
       "mlb_team": "LAD",
       "status": "Active"
     },
-    "lance mccullers jr.": {
-      "yahoo_name": "Lance McCullers Jr.",
+    "bryce elder": {
+      "yahoo_name": "Bryce Elder",
       "fantasy_team": "Munson's Mustache",
       "team_key": "469.l.123192.t.5",
       "positions": [
         "P"
       ],
-      "mlb_team": "HOU",
-      "status": "Active"
-    },
-    "kyle bradish": {
-      "yahoo_name": "Kyle Bradish",
-      "fantasy_team": "Munson's Mustache",
-      "team_key": "469.l.123192.t.5",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "BAL",
+      "mlb_team": "ATL",
       "status": "Active"
     },
     "roki sasaki": {
@@ -1311,88 +1366,51 @@
       "mlb_team": "LAD",
       "status": "Active"
     },
-    "noah schultz": {
-      "yahoo_name": "Noah Schultz",
+    "cade cavalli": {
+      "yahoo_name": "Cade Cavalli",
       "fantasy_team": "Munson's Mustache",
       "team_key": "469.l.123192.t.5",
       "positions": [
         "P"
       ],
-      "mlb_team": "CWS",
+      "mlb_team": "WSH",
       "status": "Active"
     },
-    "steven matz": {
-      "yahoo_name": "Steven Matz",
+    "luis robert jr.": {
+      "yahoo_name": "Luis Robert Jr.",
       "fantasy_team": "Munson's Mustache",
       "team_key": "469.l.123192.t.5",
       "positions": [
-        "P"
-      ],
-      "mlb_team": "TB",
-      "status": "Active"
-    },
-    "eugenio suarez": {
-      "yahoo_name": "Eugenio Su\u00e1rez",
-      "fantasy_team": "Munson's Mustache",
-      "team_key": "469.l.123192.t.5",
-      "positions": [
-        "3B",
+        "OF",
         "Util",
         "IL"
       ],
-      "mlb_team": "CIN",
+      "mlb_team": "NYM",
       "status": "IL10"
     },
-    "jackson holliday": {
-      "yahoo_name": "Jackson Holliday",
+    "giancarlo stanton": {
+      "yahoo_name": "Giancarlo Stanton",
       "fantasy_team": "Munson's Mustache",
       "team_key": "469.l.123192.t.5",
       "positions": [
-        "2B",
-        "SS",
+        "OF",
         "Util",
         "IL"
       ],
-      "mlb_team": "BAL",
+      "mlb_team": "NYY",
       "status": "IL10"
     },
-    "kyle teel": {
-      "yahoo_name": "Kyle Teel",
+    "addison barger": {
+      "yahoo_name": "Addison Barger",
       "fantasy_team": "Munson's Mustache",
       "team_key": "469.l.123192.t.5",
       "positions": [
-        "C",
-        "Util",
-        "IL"
-      ],
-      "mlb_team": "CWS",
-      "status": "IL10"
-    },
-    "ha seong kim": {
-      "yahoo_name": "Ha-Seong Kim",
-      "fantasy_team": "Munson's Mustache",
-      "team_key": "469.l.123192.t.5",
-      "positions": [
-        "2B",
-        "SS",
-        "Util",
-        "IL"
-      ],
-      "mlb_team": "ATL",
-      "status": "IL10"
-    },
-    "gavin lux": {
-      "yahoo_name": "Gavin Lux",
-      "fantasy_team": "Munson's Mustache",
-      "team_key": "469.l.123192.t.5",
-      "positions": [
-        "2B",
         "3B",
         "OF",
         "Util",
         "IL"
       ],
-      "mlb_team": "TB",
+      "mlb_team": "TOR",
       "status": "IL10"
     },
     "justin steele": {
@@ -1406,16 +1424,15 @@
       "mlb_team": "CHC",
       "status": "IL60"
     },
-    "clarke schmidt": {
-      "yahoo_name": "Clarke Schmidt",
+    "troy melton": {
+      "yahoo_name": "Troy Melton",
       "fantasy_team": "Munson's Mustache",
       "team_key": "469.l.123192.t.5",
       "positions": [
-        "P",
-        "IL"
+        "P"
       ],
-      "mlb_team": "NYY",
-      "status": "IL60"
+      "mlb_team": "DET",
+      "status": "Active"
     },
     "adley rutschman": {
       "yahoo_name": "Adley Rutschman",
@@ -1462,15 +1479,15 @@
       "mlb_team": "HOU",
       "status": "Active"
     },
-    "willy adames": {
-      "yahoo_name": "Willy Adames",
+    "anthony volpe": {
+      "yahoo_name": "Anthony Volpe",
       "fantasy_team": "Fred27",
       "team_key": "469.l.123192.t.6",
       "positions": [
         "SS",
         "Util"
       ],
-      "mlb_team": "SF",
+      "mlb_team": "NYY",
       "status": "Active"
     },
     "cody bellinger": {
@@ -1482,73 +1499,6 @@
         "Util"
       ],
       "mlb_team": "NYY",
-      "status": "Active"
-    },
-    "oneil cruz": {
-      "yahoo_name": "Oneil Cruz",
-      "fantasy_team": "Fred27",
-      "team_key": "469.l.123192.t.6",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "PIT",
-      "status": "Active"
-    },
-    "riley greene": {
-      "yahoo_name": "Riley Greene",
-      "fantasy_team": "Fred27",
-      "team_key": "469.l.123192.t.6",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "DET",
-      "status": "Active"
-    },
-    "ryan jeffers": {
-      "yahoo_name": "Ryan Jeffers",
-      "fantasy_team": "Fred27",
-      "team_key": "469.l.123192.t.6",
-      "positions": [
-        "C",
-        "Util"
-      ],
-      "mlb_team": "MIN",
-      "status": "Active"
-    },
-    "bryson stott": {
-      "yahoo_name": "Bryson Stott",
-      "fantasy_team": "Fred27",
-      "team_key": "469.l.123192.t.6",
-      "positions": [
-        "2B",
-        "SS",
-        "Util"
-      ],
-      "mlb_team": "PHI",
-      "status": "Active"
-    },
-    "matt chapman": {
-      "yahoo_name": "Matt Chapman",
-      "fantasy_team": "Fred27",
-      "team_key": "469.l.123192.t.6",
-      "positions": [
-        "3B",
-        "Util"
-      ],
-      "mlb_team": "SF",
-      "status": "Active"
-    },
-    "jo adell": {
-      "yahoo_name": "Jo Adell",
-      "fantasy_team": "Fred27",
-      "team_key": "469.l.123192.t.6",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "LAA",
       "status": "Active"
     },
     "spencer steer": {
@@ -1563,34 +1513,60 @@
       "mlb_team": "CIN",
       "status": "Active"
     },
-    "max fried": {
-      "yahoo_name": "Max Fried",
+    "oneil cruz": {
+      "yahoo_name": "Oneil Cruz",
       "fantasy_team": "Fred27",
       "team_key": "469.l.123192.t.6",
       "positions": [
-        "P"
+        "OF",
+        "Util"
       ],
-      "mlb_team": "NYY",
+      "mlb_team": "PIT",
       "status": "Active"
     },
-    "dylan cease": {
-      "yahoo_name": "Dylan Cease",
+    "bryson stott": {
+      "yahoo_name": "Bryson Stott",
       "fantasy_team": "Fred27",
       "team_key": "469.l.123192.t.6",
       "positions": [
-        "P"
+        "2B",
+        "SS",
+        "Util"
       ],
-      "mlb_team": "TOR",
+      "mlb_team": "PHI",
       "status": "Active"
     },
-    "jake irvin": {
-      "yahoo_name": "Jake Irvin",
+    "riley greene": {
+      "yahoo_name": "Riley Greene",
       "fantasy_team": "Fred27",
       "team_key": "469.l.123192.t.6",
       "positions": [
-        "P"
+        "OF",
+        "Util"
       ],
-      "mlb_team": "WSH",
+      "mlb_team": "DET",
+      "status": "Active"
+    },
+    "willy adames": {
+      "yahoo_name": "Willy Adames",
+      "fantasy_team": "Fred27",
+      "team_key": "469.l.123192.t.6",
+      "positions": [
+        "SS",
+        "Util"
+      ],
+      "mlb_team": "SF",
+      "status": "Active"
+    },
+    "matt chapman": {
+      "yahoo_name": "Matt Chapman",
+      "fantasy_team": "Fred27",
+      "team_key": "469.l.123192.t.6",
+      "positions": [
+        "3B",
+        "Util"
+      ],
+      "mlb_team": "SF",
       "status": "Active"
     },
     "tanner bibee": {
@@ -1603,16 +1579,6 @@
       "mlb_team": "CLE",
       "status": "Active"
     },
-    "zack littell": {
-      "yahoo_name": "Zack Littell",
-      "fantasy_team": "Fred27",
-      "team_key": "469.l.123192.t.6",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "WSH",
-      "status": "Active"
-    },
     "nathan eovaldi": {
       "yahoo_name": "Nathan Eovaldi",
       "fantasy_team": "Fred27",
@@ -1621,6 +1587,26 @@
         "P"
       ],
       "mlb_team": "TEX",
+      "status": "Active"
+    },
+    "ben brown": {
+      "yahoo_name": "Ben Brown",
+      "fantasy_team": "Fred27",
+      "team_key": "469.l.123192.t.6",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "CHC",
+      "status": "Active"
+    },
+    "carlos rodon": {
+      "yahoo_name": "Carlos Rod\u00f3n",
+      "fantasy_team": "Fred27",
+      "team_key": "469.l.123192.t.6",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "NYY",
       "status": "Active"
     },
     "jack flaherty": {
@@ -1633,27 +1619,72 @@
       "mlb_team": "DET",
       "status": "Active"
     },
+    "dylan cease": {
+      "yahoo_name": "Dylan Cease",
+      "fantasy_team": "Fred27",
+      "team_key": "469.l.123192.t.6",
+      "positions": [
+        "P",
+        "IL"
+      ],
+      "mlb_team": "TOR",
+      "status": "IL15"
+    },
+    "ryan jeffers": {
+      "yahoo_name": "Ryan Jeffers",
+      "fantasy_team": "Fred27",
+      "team_key": "469.l.123192.t.6",
+      "positions": [
+        "C",
+        "Util",
+        "IL"
+      ],
+      "mlb_team": "MIN",
+      "status": "IL10"
+    },
+    "jake irvin": {
+      "yahoo_name": "Jake Irvin",
+      "fantasy_team": "Fred27",
+      "team_key": "469.l.123192.t.6",
+      "positions": [
+        "P",
+        "IL"
+      ],
+      "mlb_team": "WSH",
+      "status": "IL15"
+    },
+    "ty madden": {
+      "yahoo_name": "Ty Madden",
+      "fantasy_team": "Fred27",
+      "team_key": "469.l.123192.t.6",
+      "positions": [
+        "P",
+        "IL"
+      ],
+      "mlb_team": "DET",
+      "status": "IL15"
+    },
+    "max fried": {
+      "yahoo_name": "Max Fried",
+      "fantasy_team": "Fred27",
+      "team_key": "469.l.123192.t.6",
+      "positions": [
+        "P",
+        "IL"
+      ],
+      "mlb_team": "NYY",
+      "status": "IL15"
+    },
     "yusei kikuchi": {
       "yahoo_name": "Yusei Kikuchi",
       "fantasy_team": "Fred27",
       "team_key": "469.l.123192.t.6",
       "positions": [
-        "P"
-      ],
-      "mlb_team": "LAA",
-      "status": "DTD"
-    },
-    "anthony volpe": {
-      "yahoo_name": "Anthony Volpe",
-      "fantasy_team": "Fred27",
-      "team_key": "469.l.123192.t.6",
-      "positions": [
-        "SS",
-        "Util",
+        "P",
         "IL"
       ],
-      "mlb_team": "NYY",
-      "status": "IL10"
+      "mlb_team": "LAA",
+      "status": "IL60"
     },
     "dean kremer": {
       "yahoo_name": "Dean Kremer",
@@ -1675,18 +1706,7 @@
         "IL"
       ],
       "mlb_team": "BOS",
-      "status": "IL15"
-    },
-    "carlos rodon": {
-      "yahoo_name": "Carlos Rod\u00f3n",
-      "fantasy_team": "Fred27",
-      "team_key": "469.l.123192.t.6",
-      "positions": [
-        "P",
-        "IL"
-      ],
-      "mlb_team": "NYY",
-      "status": "IL15"
+      "status": "IL60"
     },
     "nick pivetta": {
       "yahoo_name": "Nick Pivetta",
@@ -1733,37 +1753,30 @@
       "mlb_team": "AZ",
       "status": "Active"
     },
-    "corey seager": {
-      "yahoo_name": "Corey Seager",
+    "casey schmitt": {
+      "yahoo_name": "Casey Schmitt",
       "fantasy_team": "Carbon Black",
       "team_key": "469.l.123192.t.7",
       "positions": [
+        "1B",
+        "2B",
+        "3B",
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "SF",
+      "status": "Active"
+    },
+    "brayan rocchio": {
+      "yahoo_name": "Brayan Rocchio",
+      "fantasy_team": "Carbon Black",
+      "team_key": "469.l.123192.t.7",
+      "positions": [
+        "2B",
         "SS",
         "Util"
       ],
-      "mlb_team": "TEX",
-      "status": "Active"
-    },
-    "andy pages": {
-      "yahoo_name": "Andy Pages",
-      "fantasy_team": "Carbon Black",
-      "team_key": "469.l.123192.t.7",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "LAD",
-      "status": "Active"
-    },
-    "mickey moniak": {
-      "yahoo_name": "Mickey Moniak",
-      "fantasy_team": "Carbon Black",
-      "team_key": "469.l.123192.t.7",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "COL",
+      "mlb_team": "CLE",
       "status": "Active"
     },
     "byron buxton": {
@@ -1777,18 +1790,8 @@
       "mlb_team": "MIN",
       "status": "Active"
     },
-    "shohei ohtani": {
-      "yahoo_name": "Shohei Ohtani (Pitcher)",
-      "fantasy_team": "Carbon Black",
-      "team_key": "469.l.123192.t.7",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "LAD",
-      "status": "Active"
-    },
-    "ryan ohearn": {
-      "yahoo_name": "Ryan O'Hearn",
+    "gavin sheets": {
+      "yahoo_name": "Gavin Sheets",
       "fantasy_team": "Carbon Black",
       "team_key": "469.l.123192.t.7",
       "positions": [
@@ -1796,7 +1799,7 @@
         "OF",
         "Util"
       ],
-      "mlb_team": "PIT",
+      "mlb_team": "SD",
       "status": "Active"
     },
     "steven kwan": {
@@ -1810,41 +1813,48 @@
       "mlb_team": "CLE",
       "status": "Active"
     },
-    "casey schmitt": {
-      "yahoo_name": "Casey Schmitt",
+    "shohei ohtani": {
+      "yahoo_name": "Shohei Ohtani (Pitcher)",
       "fantasy_team": "Carbon Black",
       "team_key": "469.l.123192.t.7",
       "positions": [
-        "1B",
-        "2B",
-        "3B",
-        "Util"
+        "P"
       ],
-      "mlb_team": "SF",
+      "mlb_team": "LAD",
       "status": "Active"
     },
-    "bo bichette": {
-      "yahoo_name": "Bo Bichette",
+    "andy pages": {
+      "yahoo_name": "Andy Pages",
       "fantasy_team": "Carbon Black",
       "team_key": "469.l.123192.t.7",
       "positions": [
-        "3B",
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "LAD",
+      "status": "Active"
+    },
+    "j.p. crawford": {
+      "yahoo_name": "J.P. Crawford",
+      "fantasy_team": "Carbon Black",
+      "team_key": "469.l.123192.t.7",
+      "positions": [
         "SS",
         "Util"
       ],
-      "mlb_team": "NYM",
+      "mlb_team": "SEA",
       "status": "Active"
     },
-    "casey mize": {
-      "yahoo_name": "Casey Mize",
+    "max muncy": {
+      "yahoo_name": "Max Muncy",
       "fantasy_team": "Carbon Black",
       "team_key": "469.l.123192.t.7",
       "positions": [
-        "P",
-        "IL"
+        "3B",
+        "Util"
       ],
-      "mlb_team": "DET",
-      "status": "IL15"
+      "mlb_team": "LAD",
+      "status": "DTD"
     },
     "davis martin": {
       "yahoo_name": "Davis Martin",
@@ -1866,24 +1876,14 @@
       "mlb_team": "ATL",
       "status": "Active"
     },
-    "jack kochanowicz": {
-      "yahoo_name": "Jack Kochanowicz",
+    "casey mize": {
+      "yahoo_name": "Casey Mize",
       "fantasy_team": "Carbon Black",
       "team_key": "469.l.123192.t.7",
       "positions": [
         "P"
       ],
-      "mlb_team": "LAA",
-      "status": "Active"
-    },
-    "mitch keller": {
-      "yahoo_name": "Mitch Keller",
-      "fantasy_team": "Carbon Black",
-      "team_key": "469.l.123192.t.7",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "PIT",
+      "mlb_team": "DET",
       "status": "Active"
     },
     "michael wacha": {
@@ -1896,6 +1896,16 @@
       "mlb_team": "KC",
       "status": "Active"
     },
+    "michael mcgreevy": {
+      "yahoo_name": "Michael McGreevy",
+      "fantasy_team": "Carbon Black",
+      "team_key": "469.l.123192.t.7",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "STL",
+      "status": "Active"
+    },
     "michael soroka": {
       "yahoo_name": "Michael Soroka",
       "fantasy_team": "Carbon Black",
@@ -1905,6 +1915,63 @@
       ],
       "mlb_team": "AZ",
       "status": "Active"
+    },
+    "mitch keller": {
+      "yahoo_name": "Mitch Keller",
+      "fantasy_team": "Carbon Black",
+      "team_key": "469.l.123192.t.7",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "PIT",
+      "status": "Active"
+    },
+    "dustin may": {
+      "yahoo_name": "Dustin May",
+      "fantasy_team": "Carbon Black",
+      "team_key": "469.l.123192.t.7",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "STL",
+      "status": "Active"
+    },
+    "corey seager": {
+      "yahoo_name": "Corey Seager",
+      "fantasy_team": "Carbon Black",
+      "team_key": "469.l.123192.t.7",
+      "positions": [
+        "SS",
+        "Util",
+        "IL"
+      ],
+      "mlb_team": "TEX",
+      "status": "IL10"
+    },
+    "mickey moniak": {
+      "yahoo_name": "Mickey Moniak",
+      "fantasy_team": "Carbon Black",
+      "team_key": "469.l.123192.t.7",
+      "positions": [
+        "OF",
+        "Util",
+        "IL"
+      ],
+      "mlb_team": "COL",
+      "status": "IL10"
+    },
+    "ryan ohearn": {
+      "yahoo_name": "Ryan O'Hearn",
+      "fantasy_team": "Carbon Black",
+      "team_key": "469.l.123192.t.7",
+      "positions": [
+        "1B",
+        "OF",
+        "Util",
+        "IL"
+      ],
+      "mlb_team": "PIT",
+      "status": "IL10"
     },
     "jorge polanco": {
       "yahoo_name": "Jorge Polanco",
@@ -1931,15 +1998,15 @@
       "mlb_team": "TOR",
       "status": "IL10"
     },
-    "drake baldwin": {
-      "yahoo_name": "Drake Baldwin",
+    "keibert ruiz": {
+      "yahoo_name": "Keibert Ruiz",
       "fantasy_team": "Mighty Wombats",
       "team_key": "469.l.123192.t.8",
       "positions": [
         "C",
         "Util"
       ],
-      "mlb_team": "ATL",
+      "mlb_team": "WSH",
       "status": "Active"
     },
     "nick kurtz": {
@@ -1953,15 +2020,15 @@
       "mlb_team": "ATH",
       "status": "Active"
     },
-    "gleyber torres": {
-      "yahoo_name": "Gleyber Torres",
+    "travis bazzana": {
+      "yahoo_name": "Travis Bazzana",
       "fantasy_team": "Mighty Wombats",
       "team_key": "469.l.123192.t.8",
       "positions": [
         "2B",
         "Util"
       ],
-      "mlb_team": "DET",
+      "mlb_team": "CLE",
       "status": "Active"
     },
     "kevin mcgonigle": {
@@ -1998,17 +2065,6 @@
       "mlb_team": "WSH",
       "status": "Active"
     },
-    "kyle stowers": {
-      "yahoo_name": "Kyle Stowers",
-      "fantasy_team": "Mighty Wombats",
-      "team_key": "469.l.123192.t.8",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "MIA",
-      "status": "Active"
-    },
     "brandon marsh": {
       "yahoo_name": "Brandon Marsh",
       "fantasy_team": "Mighty Wombats",
@@ -2018,6 +2074,17 @@
         "Util"
       ],
       "mlb_team": "PHI",
+      "status": "Active"
+    },
+    "kyle stowers": {
+      "yahoo_name": "Kyle Stowers",
+      "fantasy_team": "Mighty Wombats",
+      "team_key": "469.l.123192.t.8",
+      "positions": [
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "MIA",
       "status": "Active"
     },
     "michael busch": {
@@ -2043,6 +2110,17 @@
       "mlb_team": "CWS",
       "status": "Active"
     },
+    "carson kelly": {
+      "yahoo_name": "Carson Kelly",
+      "fantasy_team": "Mighty Wombats",
+      "team_key": "469.l.123192.t.8",
+      "positions": [
+        "C",
+        "Util"
+      ],
+      "mlb_team": "CHC",
+      "status": "Active"
+    },
     "bryan woo": {
       "yahoo_name": "Bryan Woo",
       "fantasy_team": "Mighty Wombats",
@@ -2051,27 +2129,6 @@
         "P"
       ],
       "mlb_team": "SEA",
-      "status": "Active"
-    },
-    "garrett crochet": {
-      "yahoo_name": "Garrett Crochet",
-      "fantasy_team": "Mighty Wombats",
-      "team_key": "469.l.123192.t.8",
-      "positions": [
-        "P",
-        "IL"
-      ],
-      "mlb_team": "BOS",
-      "status": "IL15"
-    },
-    "emmet sheehan": {
-      "yahoo_name": "Emmet Sheehan",
-      "fantasy_team": "Mighty Wombats",
-      "team_key": "469.l.123192.t.8",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "LAD",
       "status": "Active"
     },
     "emerson hancock": {
@@ -2094,6 +2151,26 @@
       "mlb_team": "PHI",
       "status": "Active"
     },
+    "emmet sheehan": {
+      "yahoo_name": "Emmet Sheehan",
+      "fantasy_team": "Mighty Wombats",
+      "team_key": "469.l.123192.t.8",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "LAD",
+      "status": "Active"
+    },
+    "zebby matthews": {
+      "yahoo_name": "Zebby Matthews",
+      "fantasy_team": "Mighty Wombats",
+      "team_key": "469.l.123192.t.8",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "MIN",
+      "status": "Active"
+    },
     "will warren": {
       "yahoo_name": "Will Warren",
       "fantasy_team": "Mighty Wombats",
@@ -2109,61 +2186,53 @@
       "fantasy_team": "Mighty Wombats",
       "team_key": "469.l.123192.t.8",
       "positions": [
-        "P"
+        "P",
+        "IL"
       ],
       "mlb_team": "CHC",
-      "status": "Active"
+      "status": "IL15"
     },
-    "jameson taillon": {
-      "yahoo_name": "Jameson Taillon",
+    "lucas giolito": {
+      "yahoo_name": "Lucas Giolito",
       "fantasy_team": "Mighty Wombats",
       "team_key": "469.l.123192.t.8",
       "positions": [
         "P"
       ],
-      "mlb_team": "CHC",
+      "mlb_team": "SD",
       "status": "Active"
     },
-    "aaron nola": {
-      "yahoo_name": "Aaron Nola",
+    "peter lambert": {
+      "yahoo_name": "Peter Lambert",
       "fantasy_team": "Mighty Wombats",
       "team_key": "469.l.123192.t.8",
       "positions": [
         "P"
       ],
-      "mlb_team": "PHI",
+      "mlb_team": "HOU",
       "status": "Active"
     },
-    "clay holmes": {
-      "yahoo_name": "Clay Holmes",
-      "fantasy_team": "Mighty Wombats",
-      "team_key": "469.l.123192.t.8",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "NYM",
-      "status": "Active"
-    },
-    "jack leiter": {
-      "yahoo_name": "Jack Leiter",
-      "fantasy_team": "Mighty Wombats",
-      "team_key": "469.l.123192.t.8",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "TEX",
-      "status": "Active"
-    },
-    "wyatt langford": {
-      "yahoo_name": "Wyatt Langford",
+    "taylor trammell": {
+      "yahoo_name": "Taylor Trammell",
       "fantasy_team": "Mighty Wombats",
       "team_key": "469.l.123192.t.8",
       "positions": [
         "OF",
+        "Util"
+      ],
+      "mlb_team": "HOU",
+      "status": "Active"
+    },
+    "drake baldwin": {
+      "yahoo_name": "Drake Baldwin",
+      "fantasy_team": "Mighty Wombats",
+      "team_key": "469.l.123192.t.8",
+      "positions": [
+        "C",
         "Util",
         "IL"
       ],
-      "mlb_team": "TEX",
+      "mlb_team": "ATL",
       "status": "IL10"
     },
     "brendan donovan": {
@@ -2180,6 +2249,41 @@
       ],
       "mlb_team": "SEA",
       "status": "IL10"
+    },
+    "gleyber torres": {
+      "yahoo_name": "Gleyber Torres",
+      "fantasy_team": "Mighty Wombats",
+      "team_key": "469.l.123192.t.8",
+      "positions": [
+        "2B",
+        "Util",
+        "IL"
+      ],
+      "mlb_team": "DET",
+      "status": "IL10"
+    },
+    "wyatt langford": {
+      "yahoo_name": "Wyatt Langford",
+      "fantasy_team": "Mighty Wombats",
+      "team_key": "469.l.123192.t.8",
+      "positions": [
+        "OF",
+        "Util",
+        "IL"
+      ],
+      "mlb_team": "TEX",
+      "status": "IL10"
+    },
+    "garrett crochet": {
+      "yahoo_name": "Garrett Crochet",
+      "fantasy_team": "Mighty Wombats",
+      "team_key": "469.l.123192.t.8",
+      "positions": [
+        "P",
+        "IL"
+      ],
+      "mlb_team": "BOS",
+      "status": "IL15"
     },
     "shane bieber": {
       "yahoo_name": "Shane Bieber",
@@ -2203,15 +2307,16 @@
       "mlb_team": "MIL",
       "status": "IL15"
     },
-    "yainer diaz": {
-      "yahoo_name": "Yainer Diaz",
+    "liam hicks": {
+      "yahoo_name": "Liam Hicks",
       "fantasy_team": "Oppo Tacos",
       "team_key": "469.l.123192.t.9",
       "positions": [
         "C",
+        "1B",
         "Util"
       ],
-      "mlb_team": "HOU",
+      "mlb_team": "MIA",
       "status": "Active"
     },
     "yandy diaz": {
@@ -2258,17 +2363,6 @@
       "mlb_team": "KC",
       "status": "Active"
     },
-    "wilyer abreu": {
-      "yahoo_name": "Wilyer Abreu",
-      "fantasy_team": "Oppo Tacos",
-      "team_key": "469.l.123192.t.9",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "BOS",
-      "status": "Active"
-    },
     "randy arozarena": {
       "yahoo_name": "Randy Arozarena",
       "fantasy_team": "Oppo Tacos",
@@ -2280,15 +2374,26 @@
       "mlb_team": "SEA",
       "status": "Active"
     },
-    "teoscar hernandez": {
-      "yahoo_name": "Teoscar Hern\u00e1ndez",
+    "george springer": {
+      "yahoo_name": "George Springer",
       "fantasy_team": "Oppo Tacos",
       "team_key": "469.l.123192.t.9",
       "positions": [
         "OF",
         "Util"
       ],
-      "mlb_team": "LAD",
+      "mlb_team": "TOR",
+      "status": "Active"
+    },
+    "christian yelich": {
+      "yahoo_name": "Christian Yelich",
+      "fantasy_team": "Oppo Tacos",
+      "team_key": "469.l.123192.t.9",
+      "positions": [
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "MIL",
       "status": "Active"
     },
     "josh naylor": {
@@ -2302,17 +2407,26 @@
       "mlb_team": "SEA",
       "status": "Active"
     },
-    "jake cronenworth": {
-      "yahoo_name": "Jake Cronenworth",
+    "wilyer abreu": {
+      "yahoo_name": "Wilyer Abreu",
       "fantasy_team": "Oppo Tacos",
       "team_key": "469.l.123192.t.9",
       "positions": [
-        "1B",
-        "2B",
-        "SS",
+        "OF",
         "Util"
       ],
-      "mlb_team": "SD",
+      "mlb_team": "BOS",
+      "status": "Active"
+    },
+    "teoscar hernandez": {
+      "yahoo_name": "Teoscar Hern\u00e1ndez",
+      "fantasy_team": "Oppo Tacos",
+      "team_key": "469.l.123192.t.9",
+      "positions": [
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "LAD",
       "status": "Active"
     },
     "luke raley": {
@@ -2327,16 +2441,18 @@
       "mlb_team": "SEA",
       "status": "Active"
     },
-    "liam hicks": {
-      "yahoo_name": "Liam Hicks",
+    "mauricio dubon": {
+      "yahoo_name": "Mauricio Dub\u00f3n",
       "fantasy_team": "Oppo Tacos",
       "team_key": "469.l.123192.t.9",
       "positions": [
-        "C",
-        "1B",
+        "2B",
+        "3B",
+        "SS",
+        "OF",
         "Util"
       ],
-      "mlb_team": "MIA",
+      "mlb_team": "ATL",
       "status": "Active"
     },
     "kevin gausman": {
@@ -2359,36 +2475,6 @@
       "mlb_team": "MIL",
       "status": "Active"
     },
-    "jose soriano": {
-      "yahoo_name": "Jos\u00e9 Soriano",
-      "fantasy_team": "Oppo Tacos",
-      "team_key": "469.l.123192.t.9",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "LAA",
-      "status": "Active"
-    },
-    "luis castillo": {
-      "yahoo_name": "Luis Castillo",
-      "fantasy_team": "Oppo Tacos",
-      "team_key": "469.l.123192.t.9",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "SEA",
-      "status": "Active"
-    },
-    "ranger suarez": {
-      "yahoo_name": "Ranger Suarez",
-      "fantasy_team": "Oppo Tacos",
-      "team_key": "469.l.123192.t.9",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "BOS",
-      "status": "Active"
-    },
     "chase burns": {
       "yahoo_name": "Chase Burns",
       "fantasy_team": "Oppo Tacos",
@@ -2409,14 +2495,24 @@
       "mlb_team": "CLE",
       "status": "Active"
     },
-    "shane baz": {
-      "yahoo_name": "Shane Baz",
+    "ranger suarez": {
+      "yahoo_name": "Ranger Suarez",
       "fantasy_team": "Oppo Tacos",
       "team_key": "469.l.123192.t.9",
       "positions": [
         "P"
       ],
-      "mlb_team": "BAL",
+      "mlb_team": "BOS",
+      "status": "Active"
+    },
+    "jose soriano": {
+      "yahoo_name": "Jos\u00e9 Soriano",
+      "fantasy_team": "Oppo Tacos",
+      "team_key": "469.l.123192.t.9",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "LAA",
       "status": "Active"
     },
     "drew rasmussen": {
@@ -2429,71 +2525,88 @@
       "mlb_team": "TB",
       "status": "Active"
     },
-    "christian yelich": {
-      "yahoo_name": "Christian Yelich",
+    "shane baz": {
+      "yahoo_name": "Shane Baz",
       "fantasy_team": "Oppo Tacos",
       "team_key": "469.l.123192.t.9",
       "positions": [
-        "OF",
+        "P"
+      ],
+      "mlb_team": "BAL",
+      "status": "Active"
+    },
+    "jake cronenworth": {
+      "yahoo_name": "Jake Cronenworth",
+      "fantasy_team": "Oppo Tacos",
+      "team_key": "469.l.123192.t.9",
+      "positions": [
+        "1B",
+        "2B",
+        "SS",
         "Util",
         "IL"
       ],
-      "mlb_team": "MIL",
-      "status": "IL10"
+      "mlb_team": "SD",
+      "status": "IL7"
     },
-    "george springer": {
-      "yahoo_name": "George Springer",
+    "yainer diaz": {
+      "yahoo_name": "Yainer Diaz",
       "fantasy_team": "Oppo Tacos",
       "team_key": "469.l.123192.t.9",
       "positions": [
-        "OF",
-        "Util"
+        "C",
+        "Util",
+        "IL"
       ],
-      "mlb_team": "TOR",
-      "status": "Active"
+      "mlb_team": "HOU",
+      "status": "IL10"
     },
-    "cal raleigh": {
-      "yahoo_name": "Cal Raleigh",
+    "dillon dingler": {
+      "yahoo_name": "Dillon Dingler",
       "fantasy_team": "Jumbo Shrimp",
       "team_key": "469.l.123192.t.10",
       "positions": [
         "C",
         "Util"
       ],
-      "mlb_team": "SEA",
+      "mlb_team": "DET",
       "status": "Active"
     },
-    "spencer torkelson": {
-      "yahoo_name": "Spencer Torkelson",
+    "jake burger": {
+      "yahoo_name": "Jake Burger",
       "fantasy_team": "Jumbo Shrimp",
       "team_key": "469.l.123192.t.10",
       "positions": [
         "1B",
         "Util"
       ],
-      "mlb_team": "DET",
+      "mlb_team": "TEX",
       "status": "Active"
     },
-    "matt mclain": {
-      "yahoo_name": "Matt McLain",
+    "ezequiel duran": {
+      "yahoo_name": "Ezequiel Duran",
       "fantasy_team": "Jumbo Shrimp",
       "team_key": "469.l.123192.t.10",
       "positions": [
+        "1B",
         "2B",
+        "3B",
+        "SS",
+        "OF",
         "Util"
       ],
-      "mlb_team": "CIN",
+      "mlb_team": "TEX",
       "status": "Active"
     },
-    "josh jung": {
-      "yahoo_name": "Josh Jung",
+    "nolan arenado": {
+      "yahoo_name": "Nolan Arenado",
       "fantasy_team": "Jumbo Shrimp",
       "team_key": "469.l.123192.t.10",
       "positions": [
         "3B",
         "Util"
       ],
-      "mlb_team": "TEX",
+      "mlb_team": "AZ",
       "status": "Active"
     },
     "otto lopez": {
@@ -2519,6 +2632,17 @@
       "mlb_team": "NYY",
       "status": "Active"
     },
+    "carson benge": {
+      "yahoo_name": "Carson Benge",
+      "fantasy_team": "Jumbo Shrimp",
+      "team_key": "469.l.123192.t.10",
+      "positions": [
+        "OF",
+        "Util"
+      ],
+      "mlb_team": "NYM",
+      "status": "Active"
+    },
     "brandon nimmo": {
       "yahoo_name": "Brandon Nimmo",
       "fantasy_team": "Jumbo Shrimp",
@@ -2528,7 +2652,7 @@
         "Util"
       ],
       "mlb_team": "TEX",
-      "status": "DTD"
+      "status": "Active"
     },
     "daylen lile": {
       "yahoo_name": "Daylen Lile",
@@ -2541,84 +2665,48 @@
       "mlb_team": "WSH",
       "status": "Active"
     },
-    "jacob wilson": {
-      "yahoo_name": "Jacob Wilson",
+    "matt mclain": {
+      "yahoo_name": "Matt McLain",
       "fantasy_team": "Jumbo Shrimp",
       "team_key": "469.l.123192.t.10",
       "positions": [
-        "SS",
+        "2B",
         "Util"
       ],
-      "mlb_team": "ATH",
+      "mlb_team": "CIN",
       "status": "Active"
     },
-    "jake bauers": {
-      "yahoo_name": "Jake Bauers",
+    "josh jung": {
+      "yahoo_name": "Josh Jung",
+      "fantasy_team": "Jumbo Shrimp",
+      "team_key": "469.l.123192.t.10",
+      "positions": [
+        "3B",
+        "Util"
+      ],
+      "mlb_team": "TEX",
+      "status": "Active"
+    },
+    "spencer torkelson": {
+      "yahoo_name": "Spencer Torkelson",
       "fantasy_team": "Jumbo Shrimp",
       "team_key": "469.l.123192.t.10",
       "positions": [
         "1B",
-        "OF",
         "Util"
       ],
-      "mlb_team": "MIL",
+      "mlb_team": "DET",
       "status": "Active"
     },
-    "andres gimenez": {
-      "yahoo_name": "Andr\u00e9s Gim\u00e9nez",
+    "jeremy pena": {
+      "yahoo_name": "Jeremy Pe\u00f1a",
       "fantasy_team": "Jumbo Shrimp",
       "team_key": "469.l.123192.t.10",
       "positions": [
-        "2B",
         "SS",
         "Util"
       ],
-      "mlb_team": "TOR",
-      "status": "Active"
-    },
-    "chase meidroth": {
-      "yahoo_name": "Chase Meidroth",
-      "fantasy_team": "Jumbo Shrimp",
-      "team_key": "469.l.123192.t.10",
-      "positions": [
-        "2B",
-        "3B",
-        "SS",
-        "Util"
-      ],
-      "mlb_team": "CWS",
-      "status": "Active"
-    },
-    "ramon laureano": {
-      "yahoo_name": "Ram\u00f3n Laureano",
-      "fantasy_team": "Jumbo Shrimp",
-      "team_key": "469.l.123192.t.10",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "SD",
-      "status": "Active"
-    },
-    "royce lewis": {
-      "yahoo_name": "Royce Lewis",
-      "fantasy_team": "Jumbo Shrimp",
-      "team_key": "469.l.123192.t.10",
-      "positions": [
-        "3B",
-        "Util"
-      ],
-      "mlb_team": "MIN",
-      "status": "Active"
-    },
-    "logan webb": {
-      "yahoo_name": "Logan Webb",
-      "fantasy_team": "Jumbo Shrimp",
-      "team_key": "469.l.123192.t.10",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "SF",
+      "mlb_team": "HOU",
       "status": "Active"
     },
     "nolan mclean": {
@@ -2631,16 +2719,6 @@
       "mlb_team": "NYM",
       "status": "Active"
     },
-    "mackenzie gore": {
-      "yahoo_name": "MacKenzie Gore",
-      "fantasy_team": "Jumbo Shrimp",
-      "team_key": "469.l.123192.t.10",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "TEX",
-      "status": "Active"
-    },
     "framber valdez": {
       "yahoo_name": "Framber Valdez",
       "fantasy_team": "Jumbo Shrimp",
@@ -2649,6 +2727,36 @@
         "P"
       ],
       "mlb_team": "DET",
+      "status": "Active"
+    },
+    "gerrit cole": {
+      "yahoo_name": "Gerrit Cole",
+      "fantasy_team": "Jumbo Shrimp",
+      "team_key": "469.l.123192.t.10",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "NYY",
+      "status": "Active"
+    },
+    "spencer strider": {
+      "yahoo_name": "Spencer Strider",
+      "fantasy_team": "Jumbo Shrimp",
+      "team_key": "469.l.123192.t.10",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "ATL",
+      "status": "Active"
+    },
+    "mackenzie gore": {
+      "yahoo_name": "MacKenzie Gore",
+      "fantasy_team": "Jumbo Shrimp",
+      "team_key": "469.l.123192.t.10",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "TEX",
       "status": "Active"
     },
     "michael king": {
@@ -2661,15 +2769,15 @@
       "mlb_team": "SD",
       "status": "Active"
     },
-    "zac gallen": {
-      "yahoo_name": "Zac Gallen",
+    "sonny gray": {
+      "yahoo_name": "Sonny Gray",
       "fantasy_team": "Jumbo Shrimp",
       "team_key": "469.l.123192.t.10",
       "positions": [
         "P"
       ],
-      "mlb_team": "AZ",
-      "status": "DTD"
+      "mlb_team": "BOS",
+      "status": "Active"
     },
     "robbie ray": {
       "yahoo_name": "Robbie Ray",
@@ -2681,8 +2789,8 @@
       "mlb_team": "SF",
       "status": "Active"
     },
-    "jeremy pena": {
-      "yahoo_name": "Jeremy Pe\u00f1a",
+    "jacob wilson": {
+      "yahoo_name": "Jacob Wilson",
       "fantasy_team": "Jumbo Shrimp",
       "team_key": "469.l.123192.t.10",
       "positions": [
@@ -2690,40 +2798,30 @@
         "Util",
         "IL"
       ],
-      "mlb_team": "HOU",
+      "mlb_team": "ATH",
       "status": "IL10"
     },
-    "sonny gray": {
-      "yahoo_name": "Sonny Gray",
+    "cal raleigh": {
+      "yahoo_name": "Cal Raleigh",
       "fantasy_team": "Jumbo Shrimp",
       "team_key": "469.l.123192.t.10",
       "positions": [
-        "P",
+        "C",
+        "Util",
         "IL"
       ],
-      "mlb_team": "BOS",
-      "status": "IL15"
+      "mlb_team": "SEA",
+      "status": "IL10"
     },
-    "spencer strider": {
-      "yahoo_name": "Spencer Strider",
+    "logan webb": {
+      "yahoo_name": "Logan Webb",
       "fantasy_team": "Jumbo Shrimp",
       "team_key": "469.l.123192.t.10",
       "positions": [
         "P",
         "IL"
       ],
-      "mlb_team": "ATL",
-      "status": "IL15"
-    },
-    "gerrit cole": {
-      "yahoo_name": "Gerrit Cole",
-      "fantasy_team": "Jumbo Shrimp",
-      "team_key": "469.l.123192.t.10",
-      "positions": [
-        "P",
-        "IL"
-      ],
-      "mlb_team": "NYY",
+      "mlb_team": "SF",
       "status": "IL15"
     },
     "gabriel moreno": {
@@ -2732,11 +2830,10 @@
       "team_key": "469.l.123192.t.11",
       "positions": [
         "C",
-        "Util",
-        "IL"
+        "Util"
       ],
       "mlb_team": "AZ",
-      "status": "IL10"
+      "status": "Active"
     },
     "freddie freeman": {
       "yahoo_name": "Freddie Freeman",
@@ -2771,16 +2868,15 @@
       "mlb_team": "CHC",
       "status": "Active"
     },
-    "carlos correa": {
-      "yahoo_name": "Carlos Correa",
+    "mookie betts": {
+      "yahoo_name": "Mookie Betts",
       "fantasy_team": "Can of Corn",
       "team_key": "469.l.123192.t.11",
       "positions": [
-        "3B",
         "SS",
         "Util"
       ],
-      "mlb_team": "HOU",
+      "mlb_team": "LAD",
       "status": "Active"
     },
     "mike trout": {
@@ -2794,26 +2890,27 @@
       "mlb_team": "LAA",
       "status": "Active"
     },
-    "roman anthony": {
-      "yahoo_name": "Roman Anthony",
+    "jordan walker": {
+      "yahoo_name": "Jordan Walker",
       "fantasy_team": "Can of Corn",
       "team_key": "469.l.123192.t.11",
       "positions": [
         "OF",
         "Util"
       ],
-      "mlb_team": "BOS",
+      "mlb_team": "STL",
       "status": "Active"
     },
-    "jackson merrill": {
-      "yahoo_name": "Jackson Merrill",
+    "tyler soderstrom": {
+      "yahoo_name": "Tyler Soderstrom",
       "fantasy_team": "Can of Corn",
       "team_key": "469.l.123192.t.11",
       "positions": [
+        "1B",
         "OF",
         "Util"
       ],
-      "mlb_team": "SD",
+      "mlb_team": "ATH",
       "status": "Active"
     },
     "jonathan aranda": {
@@ -2827,18 +2924,6 @@
       "mlb_team": "TB",
       "status": "Active"
     },
-    "logan ohoppe": {
-      "yahoo_name": "Logan O'Hoppe",
-      "fantasy_team": "Can of Corn",
-      "team_key": "469.l.123192.t.11",
-      "positions": [
-        "C",
-        "Util",
-        "IL"
-      ],
-      "mlb_team": "LAA",
-      "status": "IL10"
-    },
     "christian walker": {
       "yahoo_name": "Christian Walker",
       "fantasy_team": "Can of Corn",
@@ -2850,47 +2935,28 @@
       "mlb_team": "HOU",
       "status": "Active"
     },
-    "jordan walker": {
-      "yahoo_name": "Jordan Walker",
-      "fantasy_team": "Can of Corn",
-      "team_key": "469.l.123192.t.11",
-      "positions": [
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "STL",
-      "status": "Active"
-    },
-    "jose fernandez": {
-      "yahoo_name": "Jose Fernandez",
+    "alec bohm": {
+      "yahoo_name": "Alec Bohm",
       "fantasy_team": "Can of Corn",
       "team_key": "469.l.123192.t.11",
       "positions": [
         "1B",
+        "3B",
+        "Util"
+      ],
+      "mlb_team": "PHI",
+      "status": "Active"
+    },
+    "andres gimenez": {
+      "yahoo_name": "Andr\u00e9s Gim\u00e9nez",
+      "fantasy_team": "Can of Corn",
+      "team_key": "469.l.123192.t.11",
+      "positions": [
+        "2B",
         "SS",
         "Util"
       ],
-      "mlb_team": "AZ",
-      "status": "Active"
-    },
-    "eury perez": {
-      "yahoo_name": "Eury P\u00e9rez",
-      "fantasy_team": "Can of Corn",
-      "team_key": "469.l.123192.t.11",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "MIA",
-      "status": "Active"
-    },
-    "taj bradley": {
-      "yahoo_name": "Taj Bradley",
-      "fantasy_team": "Can of Corn",
-      "team_key": "469.l.123192.t.11",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "MIN",
+      "mlb_team": "TOR",
       "status": "Active"
     },
     "paul skenes": {
@@ -2903,6 +2969,26 @@
       "mlb_team": "PIT",
       "status": "Active"
     },
+    "jacob degrom": {
+      "yahoo_name": "Jacob deGrom",
+      "fantasy_team": "Can of Corn",
+      "team_key": "469.l.123192.t.11",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "TEX",
+      "status": "Active"
+    },
+    "jesus luzardo": {
+      "yahoo_name": "Jes\u00fas Luzardo",
+      "fantasy_team": "Can of Corn",
+      "team_key": "469.l.123192.t.11",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "PHI",
+      "status": "Active"
+    },
     "ryan weathers": {
       "yahoo_name": "Ryan Weathers",
       "fantasy_team": "Can of Corn",
@@ -2913,25 +2999,24 @@
       "mlb_team": "NYY",
       "status": "Active"
     },
-    "trevor rogers": {
-      "yahoo_name": "Trevor Rogers",
-      "fantasy_team": "Can of Corn",
-      "team_key": "469.l.123192.t.11",
-      "positions": [
-        "P",
-        "IL"
-      ],
-      "mlb_team": "BAL",
-      "status": "IL15"
-    },
-    "seth lugo": {
-      "yahoo_name": "Seth Lugo",
+    "taj bradley": {
+      "yahoo_name": "Taj Bradley",
       "fantasy_team": "Can of Corn",
       "team_key": "469.l.123192.t.11",
       "positions": [
         "P"
       ],
-      "mlb_team": "KC",
+      "mlb_team": "MIN",
+      "status": "Active"
+    },
+    "eury perez": {
+      "yahoo_name": "Eury P\u00e9rez",
+      "fantasy_team": "Can of Corn",
+      "team_key": "469.l.123192.t.11",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "MIA",
       "status": "Active"
     },
     "reynaldo lopez": {
@@ -2949,33 +3034,46 @@
       "fantasy_team": "Can of Corn",
       "team_key": "469.l.123192.t.11",
       "positions": [
-        "P"
-      ],
-      "mlb_team": "MIL",
-      "status": "NA"
-    },
-    "mookie betts": {
-      "yahoo_name": "Mookie Betts",
-      "fantasy_team": "Can of Corn",
-      "team_key": "469.l.123192.t.11",
-      "positions": [
-        "SS",
-        "Util",
+        "P",
         "IL"
       ],
-      "mlb_team": "LAD",
-      "status": "IL10"
+      "mlb_team": "MIL",
+      "status": "IL15"
     },
     "grayson rodriguez": {
       "yahoo_name": "Grayson Rodriguez",
       "fantasy_team": "Can of Corn",
       "team_key": "469.l.123192.t.11",
       "positions": [
-        "P",
-        "IL"
+        "P"
       ],
       "mlb_team": "LAA",
-      "status": "IL15"
+      "status": "Active"
+    },
+    "roman anthony": {
+      "yahoo_name": "Roman Anthony",
+      "fantasy_team": "Can of Corn",
+      "team_key": "469.l.123192.t.11",
+      "positions": [
+        "OF",
+        "Util",
+        "IL"
+      ],
+      "mlb_team": "BOS",
+      "status": "IL10"
+    },
+    "carlos correa": {
+      "yahoo_name": "Carlos Correa",
+      "fantasy_team": "Can of Corn",
+      "team_key": "469.l.123192.t.11",
+      "positions": [
+        "3B",
+        "SS",
+        "Util",
+        "IL"
+      ],
+      "mlb_team": "HOU",
+      "status": "IL10"
     },
     "hunter goodman": {
       "yahoo_name": "Hunter Goodman",
@@ -2997,17 +3095,18 @@
         "Util"
       ],
       "mlb_team": "TOR",
-      "status": "Active"
+      "status": "DTD"
     },
-    "luke keaschall": {
-      "yahoo_name": "Luke Keaschall",
+    "jazz chisholm jr.": {
+      "yahoo_name": "Jazz Chisholm Jr.",
       "fantasy_team": "Frozen Ben",
       "team_key": "469.l.123192.t.12",
       "positions": [
         "2B",
+        "3B",
         "Util"
       ],
-      "mlb_team": "MIN",
+      "mlb_team": "NYY",
       "status": "Active"
     },
     "jose ramirez": {
@@ -3031,18 +3130,6 @@
         "Util"
       ],
       "mlb_team": "PIT",
-      "status": "Active"
-    },
-    "jose altuve": {
-      "yahoo_name": "Jose Altuve",
-      "fantasy_team": "Frozen Ben",
-      "team_key": "469.l.123192.t.12",
-      "positions": [
-        "2B",
-        "OF",
-        "Util"
-      ],
-      "mlb_team": "HOU",
       "status": "Active"
     },
     "jakob marsee": {
@@ -3078,36 +3165,41 @@
       "mlb_team": "NYM",
       "status": "Active"
     },
+    "luke keaschall": {
+      "yahoo_name": "Luke Keaschall",
+      "fantasy_team": "Frozen Ben",
+      "team_key": "469.l.123192.t.12",
+      "positions": [
+        "2B",
+        "Util"
+      ],
+      "mlb_team": "MIN",
+      "status": "Active"
+    },
+    "jose altuve": {
+      "yahoo_name": "Jose Altuve",
+      "fantasy_team": "Frozen Ben",
+      "team_key": "469.l.123192.t.12",
+      "positions": [
+        "2B",
+        "OF",
+        "Util",
+        "IL"
+      ],
+      "mlb_team": "HOU",
+      "status": "IL10"
+    },
     "trevor story": {
       "yahoo_name": "Trevor Story",
       "fantasy_team": "Frozen Ben",
       "team_key": "469.l.123192.t.12",
       "positions": [
         "SS",
-        "Util"
+        "Util",
+        "IL"
       ],
       "mlb_team": "BOS",
-      "status": "Active"
-    },
-    "joe ryan": {
-      "yahoo_name": "Joe Ryan",
-      "fantasy_team": "Frozen Ben",
-      "team_key": "469.l.123192.t.12",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "MIN",
-      "status": "Active"
-    },
-    "tyler glasnow": {
-      "yahoo_name": "Tyler Glasnow",
-      "fantasy_team": "Frozen Ben",
-      "team_key": "469.l.123192.t.12",
-      "positions": [
-        "P"
-      ],
-      "mlb_team": "LAD",
-      "status": "Active"
+      "status": "IL10"
     },
     "cam schlittler": {
       "yahoo_name": "Cam Schlittler",
@@ -3139,14 +3231,14 @@
       "mlb_team": "CLE",
       "status": "Active"
     },
-    "grant holmes": {
-      "yahoo_name": "Grant Holmes",
+    "joe ryan": {
+      "yahoo_name": "Joe Ryan",
       "fantasy_team": "Frozen Ben",
       "team_key": "469.l.123192.t.12",
       "positions": [
         "P"
       ],
-      "mlb_team": "ATL",
+      "mlb_team": "MIN",
       "status": "Active"
     },
     "matthew liberatore": {
@@ -3159,6 +3251,16 @@
       "mlb_team": "STL",
       "status": "Active"
     },
+    "payton tolle": {
+      "yahoo_name": "Payton Tolle",
+      "fantasy_team": "Frozen Ben",
+      "team_key": "469.l.123192.t.12",
+      "positions": [
+        "P"
+      ],
+      "mlb_team": "BOS",
+      "status": "Active"
+    },
     "bailey ober": {
       "yahoo_name": "Bailey Ober",
       "fantasy_team": "Frozen Ben",
@@ -3169,14 +3271,14 @@
       "mlb_team": "MIN",
       "status": "Active"
     },
-    "payton tolle": {
-      "yahoo_name": "Payton Tolle",
+    "grant holmes": {
+      "yahoo_name": "Grant Holmes",
       "fantasy_team": "Frozen Ben",
       "team_key": "469.l.123192.t.12",
       "positions": [
         "P"
       ],
-      "mlb_team": "BOS",
+      "mlb_team": "ATL",
       "status": "Active"
     },
     "francisco lindor": {
@@ -3196,11 +3298,10 @@
       "fantasy_team": "Frozen Ben",
       "team_key": "469.l.123192.t.12",
       "positions": [
-        "P",
-        "IL"
+        "P"
       ],
       "mlb_team": "HOU",
-      "status": "IL15"
+      "status": "Active"
     },
     "ryan pepiot": {
       "yahoo_name": "Ryan Pepiot",
@@ -3228,136 +3329,136 @@
   "standings": [
     {
       "Rank": 1,
-      "Team": "Oppo Tacos",
-      "team_key": "469.l.123192.t.9",
-      "W": 5,
-      "L": 0,
+      "Team": "Frozen Ben",
+      "team_key": "469.l.123192.t.12",
+      "W": 8,
+      "L": 1,
       "T": 0,
-      "Pct": 1.0,
-      "Total Pts": 738.5,
-      "Pts Against": 634.0
+      "Pct": 0.889,
+      "Total Pts": 1445.5,
+      "Pts Against": 1324.5
     },
     {
       "Rank": 2,
-      "Team": "I never liked jobe",
-      "team_key": "469.l.123192.t.1",
-      "W": 4,
-      "L": 1,
+      "Team": "Oppo Tacos",
+      "team_key": "469.l.123192.t.9",
+      "W": 7,
+      "L": 2,
       "T": 0,
-      "Pct": 0.8,
-      "Total Pts": 787.0,
-      "Pts Against": 651.0
+      "Pct": 0.778,
+      "Total Pts": 1388.5,
+      "Pts Against": 1236.5
     },
     {
       "Rank": 3,
-      "Team": "Frozen Ben",
-      "team_key": "469.l.123192.t.12",
-      "W": 4,
-      "L": 1,
+      "Team": "Carbon Black",
+      "team_key": "469.l.123192.t.7",
+      "W": 6,
+      "L": 3,
       "T": 0,
-      "Pct": 0.8,
-      "Total Pts": 771.5,
-      "Pts Against": 699.5
+      "Pct": 0.667,
+      "Total Pts": 1283.5,
+      "Pts Against": 1255.0
     },
     {
       "Rank": 4,
-      "Team": "Carbon Black",
-      "team_key": "469.l.123192.t.7",
-      "W": 4,
-      "L": 1,
+      "Team": "I never liked jobe",
+      "team_key": "469.l.123192.t.1",
+      "W": 5,
+      "L": 4,
       "T": 0,
-      "Pct": 0.8,
-      "Total Pts": 660.0,
-      "Pts Against": 633.5
+      "Pct": 0.556,
+      "Total Pts": 1360.5,
+      "Pts Against": 1253.5
     },
     {
       "Rank": 5,
-      "Team": "Can of Corn",
-      "team_key": "469.l.123192.t.11",
-      "W": 3,
-      "L": 2,
+      "Team": "Short Porch Pirates",
+      "team_key": "469.l.123192.t.4",
+      "W": 5,
+      "L": 4,
       "T": 0,
-      "Pct": 0.6,
-      "Total Pts": 648.0,
-      "Pts Against": 581.0
+      "Pct": 0.556,
+      "Total Pts": 1316.5,
+      "Pts Against": 1336.5
     },
     {
       "Rank": 6,
       "Team": "Mighty Wombats",
       "team_key": "469.l.123192.t.8",
-      "W": 2,
-      "L": 3,
+      "W": 4,
+      "L": 5,
       "T": 0,
-      "Pct": 0.4,
-      "Total Pts": 697.0,
-      "Pts Against": 705.0
+      "Pct": 0.444,
+      "Total Pts": 1316.5,
+      "Pts Against": 1253.5
     },
     {
       "Rank": 7,
-      "Team": "Short Porch Pirates",
-      "team_key": "469.l.123192.t.4",
-      "W": 2,
-      "L": 3,
+      "Team": "Can of Corn",
+      "team_key": "469.l.123192.t.11",
+      "W": 4,
+      "L": 5,
       "T": 0,
-      "Pct": 0.4,
-      "Total Pts": 688.0,
-      "Pts Against": 719.0
+      "Pct": 0.444,
+      "Total Pts": 1172.0,
+      "Pts Against": 1117.0
     },
     {
       "Rank": 8,
       "Team": "Fred27",
       "team_key": "469.l.123192.t.6",
-      "W": 2,
-      "L": 3,
+      "W": 3,
+      "L": 6,
       "T": 0,
-      "Pct": 0.4,
-      "Total Pts": 659.5,
-      "Pts Against": 657.5
+      "Pct": 0.333,
+      "Total Pts": 1282.5,
+      "Pts Against": 1365.5
     },
     {
       "Rank": 9,
-      "Team": "WV Black Bears",
-      "team_key": "469.l.123192.t.3",
-      "W": 2,
-      "L": 3,
+      "Team": "Munson's Mustache",
+      "team_key": "469.l.123192.t.5",
+      "W": 3,
+      "L": 6,
       "T": 0,
-      "Pct": 0.4,
-      "Total Pts": 607.5,
-      "Pts Against": 605.0
+      "Pct": 0.333,
+      "Total Pts": 1166.0,
+      "Pts Against": 1337.5
     },
     {
       "Rank": 10,
-      "Team": "Jumbo Shrimp",
-      "team_key": "469.l.123192.t.10",
-      "W": 1,
-      "L": 4,
+      "Team": "WV Black Bears",
+      "team_key": "469.l.123192.t.3",
+      "W": 3,
+      "L": 6,
       "T": 0,
-      "Pct": 0.2,
-      "Total Pts": 644.5,
-      "Pts Against": 692.5
+      "Pct": 0.333,
+      "Total Pts": 1163.0,
+      "Pts Against": 1236.0
     },
     {
       "Rank": 11,
-      "Team": "Munson's Mustache",
-      "team_key": "469.l.123192.t.5",
-      "W": 1,
-      "L": 4,
+      "Team": "Las Vegas Vipers",
+      "team_key": "469.l.123192.t.2",
+      "W": 3,
+      "L": 6,
       "T": 0,
-      "Pct": 0.2,
-      "Total Pts": 606.0,
-      "Pts Against": 777.0
+      "Pct": 0.333,
+      "Total Pts": 1116.0,
+      "Pts Against": 1213.5
     },
     {
       "Rank": 12,
-      "Team": "Las Vegas Vipers",
-      "team_key": "469.l.123192.t.2",
-      "W": 0,
-      "L": 5,
+      "Team": "Jumbo Shrimp",
+      "team_key": "469.l.123192.t.10",
+      "W": 3,
+      "L": 6,
       "T": 0,
-      "Pct": 0.0,
-      "Total Pts": 546.0,
-      "Pts Against": 698.5
+      "Pct": 0.333,
+      "Total Pts": 1108.0,
+      "Pts Against": 1189.5
     }
   ],
-  "last_refresh": "2026-04-29T22:37:25.147293"
+  "last_refresh": "2026-05-26T21:42:55.105811"
 }

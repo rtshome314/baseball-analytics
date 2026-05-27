@@ -5,7 +5,7 @@ import os
 from utils.style import inject_custom_css, render_nav_back, render_data_status
 from config import DEFAULT_SEASON, AVAILABLE_SEASONS
 
-from utils.data_loader import load_batting_stats, load_pitching_stats
+from utils.data_loader import load_batting_stats, load_pitching_stats, load_batting_stats_post, load_pitching_stats_post
 
 BOOKMARK_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "sb_bookmarks.json")
 
@@ -35,6 +35,7 @@ with filters:
     st.markdown("### ⚙️ Browser Settings")
     season = st.selectbox("Season", AVAILABLE_SEASONS, index=AVAILABLE_SEASONS.index(DEFAULT_SEASON), key="sb_season")
     stat_type = st.radio("Stat Type", ["Batting", "Pitching"])
+    season_type = st.radio("Season Type", ["Regular Season", "Postseason"], horizontal=True, key="sb_season_type")
     min_pa = st.slider("Min PA" if stat_type == "Batting" else "Min IP", 0, 500, 50)
 
     # --- Bookmarks ---
@@ -64,10 +65,10 @@ with filters:
         st.success(f"Saved '{new_bm_name}'")
 
 if stat_type == "Batting":
-    df = load_batting_stats(season)
+    df = load_batting_stats_post(season) if season_type == "Postseason" else load_batting_stats(season)
     qual_col = "PA"
 else:
-    df = load_pitching_stats(season)
+    df = load_pitching_stats_post(season) if season_type == "Postseason" else load_pitching_stats(season)
     qual_col = "IP"
 
 # Normalize team column name (BRef uses "Tm")

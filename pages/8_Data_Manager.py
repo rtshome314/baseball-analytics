@@ -11,6 +11,8 @@ from utils.data_loader import (
     save_weekly_player_stats, load_weekly_player_stats,
     save_yahoo_data, load_yahoo_data,
     save_fantasy_scoring, load_fantasy_scoring,
+    load_batting_stats, load_pitching_stats,
+    load_batting_stats_post, load_pitching_stats_post,
 )
 
 st.set_page_config(page_title="Data Manager", page_icon="⚾", layout="wide")
@@ -29,8 +31,10 @@ meta = _load_metadata()
 
 dataset_labels = {
     "statcast": "Statcast Pitch Data",
-    "batting_stats": "Batting Stats (FanGraphs)",
-    "pitching_stats": "Pitching Stats (FanGraphs)",
+    "batting_stats": "Batting Stats - Regular Season (Baseball Reference)",
+    "batting_stats_post": "Batting Stats - Postseason (Baseball Reference)",
+    "pitching_stats": "Pitching Stats - Regular Season (Baseball Reference)",
+    "pitching_stats_post": "Pitching Stats - Postseason (Baseball Reference)",
     "statcast_batting_agg": "Statcast Batting Aggregates",
     "statcast_pitching_agg": "Statcast Pitching Aggregates",
     "statcast_batter_pcts": "Statcast Batter Percentiles (Savant)",
@@ -175,8 +179,10 @@ with col1:
 
         st.success(f"""
         ✅ Refresh complete!
-        - Batting stats: {results['batting']:,} players
-        - Pitching stats: {results['pitching']:,} players
+        - Batting stats (regular season): {results['batting']:,} players
+        - Batting stats (postseason): {results['batting_post']:,} players
+        - Pitching stats (regular season): {results['pitching']:,} players
+        - Pitching stats (postseason): {results['pitching_post']:,} players
         - Statcast batting agg: {results['sc_batting']:,} players
         - Statcast pitching agg: {results['sc_pitching']:,} players
         - Statcast pitches: {results['statcast']:,} total rows
@@ -185,13 +191,14 @@ with col1:
         st.rerun()
 
 with col2:
+    confirm = st.checkbox("I understand this will replace all data (may take 5-10 minutes)")
     if st.button("🗑️ Full Re-download (replace all)", use_container_width=True):
-        st.warning("This will re-download the entire season. May take 5-10 minutes.")
-        confirm = st.checkbox("I understand, proceed with full download")
         if confirm:
             results = refresh_all_data(season, full_statcast=True)
             st.success(f"✅ Full download complete! {results['statcast']:,} Statcast pitches.")
             st.rerun()
+        else:
+            st.warning("Please check the confirmation box before proceeding.")
 
 st.markdown("---")
 st.caption(

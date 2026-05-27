@@ -15,6 +15,7 @@ from utils.yahoo_data import (
     build_player_scoring_table, build_team_standings_with_splits,
     sync_rosters_to_bookmarks, get_weekly_team_points,
     build_player_scoring_from_statcast,
+    get_draft_results, get_current_matchups,
 )
 from utils.data_loader import load_batting_stats, load_pitching_stats, load_yahoo_data, save_yahoo_data, yahoo_data_is_fresh, save_fantasy_scoring, load_fantasy_scoring, load_statcast_local, load_weekly_player_stats
 from utils.charts import CHART_TEMPLATE
@@ -82,12 +83,14 @@ st.markdown("---")
 BOOKMARKS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "bookmarks.json")
 
 # --- Tabs ---
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📋 My Roster",
     "🏅 All Teams",
     "📊 Scoring System",
     "🏆 Standings & Scoring",
     "📈 Weekly Trends",
+    "🎯 Draft Board",
+    "⚔️ Matchups",
 ])
 
 # ================================================================
@@ -621,3 +624,445 @@ with tab5:
                         st.dataframe(pivot_p, use_container_width=True)
                 else:
                     st.info("Click **Calculate Weekly Trends** to generate charts.")
+
+
+# ================================================================
+# TAB 6: DRAFT BOARD
+# ================================================================
+with tab6:
+    st.markdown("### 🎯 Draft Board")
+
+    col_draft_load, col_draft_info = st.columns([1, 3])
+    with col_draft_load:
+        draft_load_btn = st.button("🔄 Load Draft Results", type="primary", key="draft_load", use_container_width=True)
+    with col_draft_info:
+        st.info("Pulls draft order and picks from Yahoo. Player names resolved from current rosters — dropped players will show player key as fallback.")
+
+    if draft_load_btn:
+        with st.spinner("Loading draft results from Yahoo..."):
+            draft_picks, draft_raw_xml = get_draft_results(access_token, YAHOO_LEAGUE_ID)
+        if draft_picks:
+            st.session_state["draft_picks"] = draft_picks
+            st.session_state.pop("draft_raw_xml", None)
+        else:
+            st.warning("No draft results found. Showing raw Yahoo API response for debugging:")
+            st.session_state["draft_raw_xml"] = draft_raw_xml
+
+    if "draft_raw_xml" in st.session_state:
+        st.code(st.session_state["draft_raw_xml"][:3000] if st.session_state["draft_raw_xml"] else "No response", language="xml")
+
+    if "draft_picks" in st.session_state:
+        draft_picks = st.session_state["draft_picks"]
+        draft_df = pd.DataFrame(draft_picks)
+
+        is_auction = draft_df["is_auction"].iloc[0] if "is_auction" in draft_df.columns and not draft_df.empty else False
+
+        if is_auction:
+            st.caption("🏷️ Auction draft — sorted by cost descending.")
+        
+        draft_view = st.radio(
+            "View:",
+            ["Full Draft Table", "Team Draft Board"],
+            horizontal=True,
+            key="draft_view_toggle"
+        )
+
+        if draft_view == "Full Draft Table":
+            st.markdown("#### All Picks")
+
+            # Filters
+            col_f1, col_f2 = st.columns(2)
+            with col_f1:
+                all_teams_draft = sorted(draft_df["team_name"].unique().tolist())
+                filter_teams_draft = st.multiselect(
+                    "Filter by team:", all_teams_draft, default=[], key="draft_team_filter",
+                    placeholder="All teams"
+                )
+            with col_f2:
+                all_pos_draft = sorted(draft_df["position"].replace("", "Unknown").unique().tolist())
+                filter_pos_draft = st.multiselect(
+                    "Filter by position:", all_pos_draft, default=[], key="draft_pos_filter",
+                    placeholder="All positions"
+                )
+
+            display_draft = draft_df.copy()
+            if filter_teams_draft:
+                display_draft = display_draft[display_draft["team_name"].isin(filter_teams_draft)]
+            if filter_pos_draft:
+                display_draft = display_draft[display_draft["position"].replace("", "Unknown").isin(filter_pos_draft)]
+
+            if is_auction:
+                display_draft_cols = display_draft[["cost", "team_name", "player_name", "position", "mlb_team"]]
+                display_draft_cols.columns = ["Cost ($)", "Team", "Player", "Position", "MLB Team"]
+            else:
+                display_draft_cols = display_draft[["pick", "round", "team_name", "player_name", "position", "mlb_team"]]
+                display_draft_cols.columns = ["Pick", "Round", "Team", "Player", "Position", "MLB Team"]
+
+            st.markdown(f"**{len(display_draft_cols)} picks**")
+            st.dataframe(display_draft_cols, use_container_width=True, hide_index=True, height=600)
+
+            csv_draft = display_draft_cols.to_csv(index=False)
+            st.download_button("📥 Download CSV", csv_draft, file_name="draft_results.csv", mime="text/csv")
+
+        else:
+            # Team draft board
+            st.markdown("#### Team Draft Board")
+            team_first_pick = draft_df.groupby("team_name")["pick"].min().sort_values()
+            all_teams_board = team_first_pick.index.tolist()
+
+            if is_auction:
+                st.caption("Each column is a team. Players sorted by cost descending. Cost shown in parentheses.")
+                board_data = {}
+                for team in all_teams_board:
+                    team_picks = draft_df[draft_df["team_name"] == team].sort_values("cost", ascending=False)
+                    board_data[team] = [
+                        f"{row['player_name']} (${row['cost']})"
+                        for _, row in team_picks.iterrows()
+                    ]
+                # Pad to same length
+                max_len = max(len(v) for v in board_data.values()) if board_data else 0
+                board_rows = []
+                for i in range(max_len):
+                    row = {"#": i + 1}
+                    for team in all_teams_board:
+                        picks_list = board_data.get(team, [])
+                        row[team] = picks_list[i] if i < len(picks_list) else "—"
+                    board_rows.append(row)
+                board_df = pd.DataFrame(board_rows).set_index("#")
+            else:
+                st.caption("Each column is a team. Rows are rounds. Pick number shown in parentheses.")
+                all_rounds = sorted(draft_df["round"].dropna().unique().tolist())
+                board_data = {}
+                for team in all_teams_board:
+                    team_picks = draft_df[draft_df["team_name"] == team].sort_values("round")
+                    board_data[team] = {
+                        row["round"]: f"{row['player_name']} ({row['pick']})"
+                        for _, row in team_picks.iterrows()
+                    }
+                board_rows = []
+                for rnd in all_rounds:
+                    row = {"Round": rnd}
+                    for team in all_teams_board:
+                        row[team] = board_data.get(team, {}).get(rnd, "—")
+                    board_rows.append(row)
+                board_df = pd.DataFrame(board_rows).set_index("Round")
+
+            st.dataframe(board_df, use_container_width=True, height=600)
+
+
+# ================================================================
+# TAB 7: MATCHUPS
+# ================================================================
+with tab7:
+    st.markdown("### ⚔️ Matchups")
+
+    from datetime import date as dt_date2
+
+    # Week selector — reuse the WEEK_DATES map from tab5
+    WEEK_DATES_MU = {
+        1:  ("2026-03-27", "2026-04-06"),
+        2:  ("2026-04-07", "2026-04-13"),
+        3:  ("2026-04-14", "2026-04-20"),
+        4:  ("2026-04-21", "2026-04-27"),
+        5:  ("2026-04-28", "2026-05-04"),
+        6:  ("2026-05-05", "2026-05-11"),
+        7:  ("2026-05-12", "2026-05-18"),
+        8:  ("2026-05-19", "2026-05-25"),
+        9:  ("2026-05-26", "2026-06-01"),
+        10: ("2026-06-02", "2026-06-08"),
+        11: ("2026-06-09", "2026-06-15"),
+        12: ("2026-06-16", "2026-06-22"),
+        13: ("2026-06-23", "2026-06-29"),
+        14: ("2026-06-30", "2026-07-06"),
+        15: ("2026-07-07", "2026-07-13"),
+        16: ("2026-07-14", "2026-07-20"),
+        17: ("2026-07-21", "2026-07-27"),
+        18: ("2026-07-28", "2026-08-03"),
+        19: ("2026-08-04", "2026-08-10"),
+        20: ("2026-08-11", "2026-08-17"),
+        21: ("2026-08-18", "2026-08-24"),
+        22: ("2026-08-25", "2026-08-31"),
+        23: ("2026-09-01", "2026-09-07"),
+        24: ("2026-09-08", "2026-09-14"),
+        25: ("2026-09-15", "2026-09-21"),
+        26: ("2026-09-22", "2026-09-27"),
+    }
+
+    today2 = dt_date2.today()
+    available_mu_weeks = {
+        w: (s, e) for w, (s, e) in WEEK_DATES_MU.items()
+        if dt_date2.fromisoformat(s) <= today2
+    }
+    current_mu_week = max(available_mu_weeks.keys()) if available_mu_weeks else 1
+
+    col_mu_week, col_mu_load = st.columns([2, 1])
+    with col_mu_week:
+        selected_mu_week = st.selectbox(
+            "Week:",
+            list(available_mu_weeks.keys()),
+            index=len(available_mu_weeks) - 1,
+            format_func=lambda w: f"Week {w}  ({WEEK_DATES_MU[w][0]} – {WEEK_DATES_MU[w][1]})",
+            key="mu_week_sel"
+        )
+    with col_mu_load:
+        st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+        mu_load_btn = st.button("🔄 Load Matchups", type="primary", key="mu_load", use_container_width=True)
+
+    if mu_load_btn:
+        with st.spinner("Loading matchups from Yahoo..."):
+            matchups_raw = get_current_matchups(access_token, YAHOO_LEAGUE_ID, week=selected_mu_week)
+        st.session_state["mu_matchups"] = matchups_raw
+        st.session_state["mu_week_loaded"] = selected_mu_week
+
+    if "mu_matchups" in st.session_state and st.session_state.get("mu_week_loaded") == selected_mu_week:
+        matchups_raw = st.session_state["mu_matchups"]
+        loaded_week = st.session_state["mu_week_loaded"]
+
+        if not matchups_raw:
+            st.warning("No matchup data found for this week.")
+        else:
+            week_start_str, week_end_str = WEEK_DATES_MU.get(loaded_week, ("", ""))
+
+            # Load Statcast + rosters for real stat lookup
+            sc_df_mu = load_statcast_local(DEFAULT_SEASON)
+            rosters_mu = st.session_state.get("fantasy_rosters_cached", {})
+            if not rosters_mu:
+                cached_mu = load_yahoo_data()
+                rosters_mu = cached_mu.get("rosters", {}) if cached_mu else {}
+
+            has_statcast = not sc_df_mu.empty
+
+            if has_statcast:
+                sc_df_mu["game_date"] = pd.to_datetime(sc_df_mu["game_date"])
+                from utils.data_loader import load_batter_lookup
+                lookup_mu = load_batter_lookup(DEFAULT_SEASON)
+                if not lookup_mu.empty and "batter" in sc_df_mu.columns:
+                    sc_df_mu["batter"] = sc_df_mu["batter"].astype(int)
+                    lookup_mu["batter"] = lookup_mu["batter"].astype(int)
+                    sc_df_mu = sc_df_mu.merge(lookup_mu, on="batter", how="left")
+
+                start_d_mu = dt_date2.fromisoformat(week_start_str) if week_start_str else None
+                end_d_mu = dt_date2.fromisoformat(week_end_str) if week_end_str else None
+
+                with st.spinner("Calculating player stats for the week..."):
+                    batter_mu_df, pitcher_mu_df = build_player_scoring_from_statcast(
+                        sc_df_mu, rosters_mu,
+                        start_date=start_d_mu, end_date=end_d_mu
+                    )
+
+                # Build lookup: player name -> stats row
+                batter_stats_lookup = {r["Name"]: r for r in batter_mu_df.to_dict("records")} if not batter_mu_df.empty else {}
+                pitcher_stats_lookup = {r["Name"]: r for r in pitcher_mu_df.to_dict("records")} if not pitcher_mu_df.empty else {}
+            else:
+                batter_stats_lookup = {}
+                pitcher_stats_lookup = {}
+                st.caption("⚠️ No Statcast data loaded — showing Yahoo points only. Download Statcast data in Data Manager for full stats.")
+
+            # Build name->team map from rosters
+            name_to_fantasy_team = {}
+            for norm_name, info in rosters_mu.items():
+                name_to_fantasy_team[info["yahoo_name"]] = info["fantasy_team"]
+                name_to_fantasy_team[norm_name] = info["fantasy_team"]
+
+            # Helper: get all players for a team from rosters
+            def get_team_players(team_name):
+                return [
+                    info for info in rosters_mu.values()
+                    if info["fantasy_team"] == team_name
+                ]
+
+            # Helper: aggregate team stats across all rostered players
+            def aggregate_team_stats(team_name):
+                players = get_team_players(team_name)
+                b_stats = {"HR": 0, "SB": 0, "BB": 0, "H": 0, "AB": 0, "SO": 0, "Fantasy Pts": 0.0}
+                p_stats = {"IP": 0.0, "SO": 0, "BB": 0, "Fantasy Pts": 0.0}
+                hits, ab = 0, 0
+                for p in players:
+                    pname = p["yahoo_name"]
+                    is_pitcher = any(pos in p.get("positions", []) for pos in ["SP", "RP", "P"])
+                    if is_pitcher:
+                        row = pitcher_stats_lookup.get(pname, {})
+                        p_stats["IP"] += row.get("IP", 0) or 0
+                        p_stats["SO"] += row.get("SO", 0) or 0
+                        p_stats["BB"] += row.get("BB", 0) or 0
+                        p_stats["Fantasy Pts"] += row.get("Fantasy Pts", 0) or 0
+                    else:
+                        row = batter_stats_lookup.get(pname, {})
+                        b_stats["HR"] += row.get("HR", 0) or 0
+                        b_stats["SB"] += row.get("SB", 0) or 0
+                        b_stats["BB"] += row.get("BB", 0) or 0
+                        b_stats["H"] += row.get("H", 0) or 0
+                        b_stats["AB"] += row.get("PA", 0) or 0
+                        b_stats["SO"] += row.get("SO", 0) or 0
+                        b_stats["Fantasy Pts"] += row.get("Fantasy Pts", 0) or 0
+                        hits += row.get("H", 0) or 0
+                        ab_val = row.get("PA", 0) or 0
+                        ab += ab_val
+                b_stats["AVG"] = round(hits / ab, 3) if ab > 0 else 0.0
+                return b_stats, p_stats
+
+            # View toggle
+            mu_view = st.radio("View:", ["Scoreboard", "Player Cards"], horizontal=True, key="mu_view_toggle")
+            st.markdown("---")
+
+            for mu in matchups_raw:
+                t1_name = mu["team1_name"]
+                t2_name = mu["team2_name"]
+                t1_pts = mu["team1_pts"]
+                t2_pts = mu["team2_pts"]
+                t1_proj = mu["team1_projected"]
+                t2_proj = mu["team2_projected"]
+                status = mu.get("status", "")
+                is_tied = mu.get("is_tied", False)
+
+                t1_leading = t1_pts > t2_pts
+                t2_leading = t2_pts > t1_pts
+
+                if mu_view == "Scoreboard":
+                    with st.container():
+                        st.markdown(
+                            f"""
+                            <div style="background:var(--color-background-primary);
+                                        border:0.5px solid var(--color-border-tertiary);
+                                        border-radius:12px; padding:1.25rem; margin-bottom:1rem;">
+                              <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:1rem; margin-bottom:1rem;">
+                                <div>
+                                  <div style="font-size:15px; font-weight:500; color:var(--color-text-primary);">{t1_name}</div>
+                                  <div style="font-size:28px; font-weight:500; color:{'#185FA5' if t1_leading else 'var(--color-text-primary)'};">{t1_pts:.1f}</div>
+                                  {'<div style="font-size:12px;color:var(--color-text-tertiary);">proj ' + str(round(t1_proj,1)) + '</div>' if t1_proj else ''}
+                                </div>
+                                <div style="font-size:13px; color:var(--color-text-secondary); text-align:center;">{'🔴 Live' if status == 'midevent' else ('✅ Final' if status == 'postevent' else 'vs')}</div>
+                                <div style="text-align:right;">
+                                  <div style="font-size:15px; font-weight:500; color:var(--color-text-primary);">{t2_name}</div>
+                                  <div style="font-size:28px; font-weight:500; color:{'#185FA5' if t2_leading else 'var(--color-text-primary)'};">{t2_pts:.1f}</div>
+                                  {'<div style="font-size:12px;color:var(--color-text-tertiary);">proj ' + str(round(t2_proj,1)) + '</div>' if t2_proj else ''}
+                                </div>
+                              </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+
+                        if has_statcast:
+                            t1_b, t1_p = aggregate_team_stats(t1_name)
+                            t2_b, t2_p = aggregate_team_stats(t2_name)
+
+                            def hi(v1, v2, fmt=None):
+                                """Return (str1, str2) with leading value bolded blue."""
+                                s1 = fmt(v1) if fmt else str(v1)
+                                s2 = fmt(v2) if fmt else str(v2)
+                                c1 = "#185FA5" if v1 > v2 else "var(--color-text-primary)"
+                                c2 = "#185FA5" if v2 > v1 else "var(--color-text-primary)"
+                                return (
+                                    f'<span style="color:{c1};font-weight:{"500" if v1>v2 else "400"}">{s1}</span>',
+                                    f'<span style="color:{c2};font-weight:{"500" if v2>v1 else "400"}">{s2}</span>',
+                                )
+
+                            def stat_row(label, v1, v2, fmt=None):
+                                h1, h2 = hi(v1, v2, fmt)
+                                return f"""
+                                <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;font-size:13px;margin:4px 0;">
+                                  <div>{h1}</div>
+                                  <div style="color:var(--color-text-secondary);font-size:12px;padding:0 12px;text-align:center;">{label}</div>
+                                  <div style="text-align:right;">{h2}</div>
+                                </div>"""
+
+                            batting_html = (
+                                '<div style="font-size:11px;font-weight:500;color:var(--color-text-tertiary);'
+                                'text-transform:uppercase;letter-spacing:.06em;margin:1rem 0 6px;">Batting</div>'
+                                + stat_row("HR", t1_b["HR"], t2_b["HR"])
+                                + stat_row("SB", t1_b["SB"], t2_b["SB"])
+                                + stat_row("BB", t1_b["BB"], t2_b["BB"])
+                                + stat_row("AVG", t1_b["AVG"], t2_b["AVG"], fmt=lambda x: f"{x:.3f}")
+                                + stat_row("SO", t1_b["SO"], t2_b["SO"])
+                            )
+                            pitching_html = (
+                                '<div style="font-size:11px;font-weight:500;color:var(--color-text-tertiary);'
+                                'text-transform:uppercase;letter-spacing:.06em;margin:1rem 0 6px;">Pitching</div>'
+                                + stat_row("IP", t1_p["IP"], t2_p["IP"], fmt=lambda x: f"{x:.1f}")
+                                + stat_row("K", t1_p["SO"], t2_p["SO"])
+                                + stat_row("BB allowed", t1_p["BB"], t2_p["BB"])
+                            )
+
+                            st.markdown(
+                                f'<div style="border-top:0.5px solid var(--color-border-tertiary);padding-top:1rem;">'
+                                + batting_html + pitching_html +
+                                '</div></div>',
+                                unsafe_allow_html=True
+                            )
+                        else:
+                            st.markdown("</div>", unsafe_allow_html=True)
+
+                else:
+                    # Player Cards view
+                    st.markdown(
+                        f"""<div style="background:var(--color-background-primary);
+                                        border:0.5px solid var(--color-border-tertiary);
+                                        border-radius:12px; padding:1.25rem; margin-bottom:1rem;">
+                          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <span style="font-size:15px;font-weight:500;color:var(--color-text-primary);">{t1_name}</span>
+                            <span style="font-size:18px;font-weight:500;color:{'#185FA5' if t1_leading else 'var(--color-text-primary)'};">{t1_pts:.1f}</span>
+                            <span style="font-size:13px;color:var(--color-text-secondary);">vs</span>
+                            <span style="font-size:18px;font-weight:500;color:{'#185FA5' if t2_leading else 'var(--color-text-primary)'};">{t2_pts:.1f}</span>
+                            <span style="font-size:15px;font-weight:500;color:var(--color-text-primary);">{t2_name}</span>
+                          </div>""",
+                        unsafe_allow_html=True
+                    )
+
+                    for team_name in [t1_name, t2_name]:
+                        players_mu = get_team_players(team_name)
+                        batters_mu = [p for p in players_mu if not any(pos in p.get("positions", []) for pos in ["SP", "RP", "P"])]
+                        pitchers_mu = [p for p in players_mu if any(pos in p.get("positions", []) for pos in ["SP", "RP", "P"])]
+
+                        st.markdown(f"**{team_name}**")
+
+                        for group_label, group_players, stats_lookup, stat_keys in [
+                            ("Batters", batters_mu, batter_stats_lookup,
+                             [("HR", "HR"), ("SB", "SB"), ("AVG", "AVG"), ("BB", "BB"), ("SO", "SO")]),
+                            ("Pitchers", pitchers_mu, pitcher_stats_lookup,
+                             [("IP", "IP"), ("K", "SO"), ("BB", "BB")]),
+                        ]:
+                            if not group_players:
+                                continue
+                            st.markdown(
+                                f'<div style="font-size:11px;font-weight:500;color:var(--color-text-tertiary);'
+                                f'text-transform:uppercase;letter-spacing:.06em;margin:8px 0 6px;">{group_label}</div>',
+                                unsafe_allow_html=True
+                            )
+                            cols_mu = st.columns(3)
+                            for idx, player in enumerate(group_players):
+                                pname = player["yahoo_name"]
+                                row = stats_lookup.get(pname, {})
+                                fpts = row.get("Fantasy Pts", 0) or 0
+                                positions = ", ".join(player.get("positions", []))
+                                mlb_team = player.get("mlb_team", "")
+
+                                stat_bits = []
+                                for label, key in stat_keys:
+                                    val = row.get(key)
+                                    if val is not None and val != 0:
+                                        if key == "AVG":
+                                            stat_bits.append(f"{label} {val:.3f}")
+                                        elif key == "IP":
+                                            stat_bits.append(f"{label} {val:.1f}")
+                                        else:
+                                            stat_bits.append(f"{label} {int(val)}")
+                                stats_str = " · ".join(stat_bits) if stat_bits else "No data"
+
+                                pts_color = "#185FA5" if fpts > 0 else ("var(--color-text-danger)" if fpts < 0 else "var(--color-text-secondary)")
+
+                                with cols_mu[idx % 3]:
+                                    st.markdown(
+                                        f"""<div style="background:var(--color-background-secondary);
+                                                        border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+                                          <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px;">{pname}</div>
+                                          <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;">{positions} · {mlb_team}</div>
+                                          <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px;">{stats_str}</div>
+                                          <div style="font-size:11px;color:{pts_color};font-weight:500;">{'+' if fpts > 0 else ''}{fpts:.1f} pts</div>
+                                        </div>""",
+                                        unsafe_allow_html=True
+                                    )
+
+                    st.markdown("</div>", unsafe_allow_html=True)
+                    st.markdown("---")
+    else:
+        st.info("Select a week and click **Load Matchups** to get started.")

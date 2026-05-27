@@ -8,6 +8,8 @@ from config import DEFAULT_SEASON, AVAILABLE_SEASONS
 from utils.data_loader import (
     load_batting_stats,
     load_pitching_stats,
+    load_batting_stats_post,
+    load_pitching_stats_post,
     load_statcast_batting_agg,
     load_statcast_pitching_agg,
     load_statcast_batter_percentiles,
@@ -53,6 +55,7 @@ with filters:
     st.markdown("### ⚙️ Comparison Settings")
     season = st.selectbox("Season", AVAILABLE_SEASONS, index=AVAILABLE_SEASONS.index(DEFAULT_SEASON))
     player_type = st.radio("Player Type", ["Batters", "Pitchers"])
+    season_type = st.radio("Season Type", ["Regular Season", "Postseason"], horizontal=True, key="pc_season_type")
     show_qualified_only = st.checkbox("Show only qualified players", value=False, key="qual_filter")
     st.markdown("### 🔀 Splits")
     split_hand = st.radio("Pitcher Hand", ["All", "vs RHP", "vs LHP", "Both"], horizontal=True, key="split_hand")
@@ -115,14 +118,14 @@ PITCHER_TRADITIONAL_METRICS = {
 }
 
 if player_type == "Batters":
-    trad_stats = load_batting_stats(season)
+    trad_stats = load_batting_stats_post(season) if season_type == "Postseason" else load_batting_stats(season)
     statcast_agg = load_statcast_batting_agg(season)
     savant_pcts = load_statcast_batter_percentiles(season)
     sc_metrics = BATTER_STATCAST_METRICS
     trad_metrics = BATTER_TRADITIONAL_METRICS
     invert_metrics = ["K%"]
 else:
-    trad_stats = load_pitching_stats(season)
+    trad_stats = load_pitching_stats_post(season) if season_type == "Postseason" else load_pitching_stats(season)
     statcast_agg = load_statcast_pitching_agg(season)
     savant_pcts = load_statcast_pitcher_percentiles(season)
     sc_metrics = PITCHER_STATCAST_METRICS

@@ -1,9 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-from matplotlib.lines import Line2D
+import plotly.graph_objects as go
+import plotly.express as px
 import os
 
 from utils.style import inject_custom_css, render_nav_back, render_data_status
@@ -117,6 +116,10 @@ if not df_raw.empty:
         default_start = min_date if days is None else max(min_date, max_date - datetime.timedelta(days=days - 1))
 
     # ── Sidebar filters ──────────────────────────────────────────────────────
+    # NOTE: All option lists are built from df (pre-filter snapshot) so that
+    # changing the date range does NOT reset other multiselect widgets.
+    df_options = df.copy()  # stable snapshot for building option lists
+
     with filters:
         if "game_date" in df.columns:
             date_range = st.date_input(
@@ -124,102 +127,107 @@ if not df_raw.empty:
                 min_value=min_date, max_value=max_date,
                 key="sc_date_range",
             )
-            if len(date_range) == 2:
-                df = df[
-                    (df["game_date"].dt.date >= date_range[0]) &
-                    (df["game_date"].dt.date <= date_range[1])
-                ]
 
         st.markdown("---")
         st.markdown("**Pitcher**")
 
-        if "player_name" in df.columns:
-            pitchers = sorted(df["player_name"].dropna().unique().tolist())
+        if "player_name" in df_options.columns:
+            pitchers = sorted(df_options["player_name"].dropna().unique().tolist())
             selected_pitchers = st.multiselect("Pitcher Name", pitchers)
-            if selected_pitchers:
-                df = df[df["player_name"].isin(selected_pitchers)]
 
-        if "pitcher_team" in df.columns:
-            pitcher_teams = sorted(df["pitcher_team"].dropna().unique().tolist())
+        if "pitcher_team" in df_options.columns:
+            pitcher_teams = sorted(df_options["pitcher_team"].dropna().unique().tolist())
             selected_pitcher_teams = st.multiselect("Pitcher Team", pitcher_teams)
-            if selected_pitcher_teams:
-                df = df[df["pitcher_team"].isin(selected_pitcher_teams)]
 
-        if "p_throws" in df.columns:
-            throw_options = sorted(df["p_throws"].dropna().unique().tolist())
+        if "p_throws" in df_options.columns:
+            throw_options = sorted(df_options["p_throws"].dropna().unique().tolist())
             selected_throws = st.multiselect("Pitcher Hand", throw_options)
-            if selected_throws:
-                df = df[df["p_throws"].isin(selected_throws)]
 
         st.markdown("---")
         st.markdown("**Batter**")
 
-        if "batter_name" in df.columns:
-            hitters = sorted(df["batter_name"].dropna().unique().tolist())
+        if "batter_name" in df_options.columns:
+            hitters = sorted(df_options["batter_name"].dropna().unique().tolist())
             selected_hitters = st.multiselect("Hitter Name", hitters)
-            if selected_hitters:
-                df = df[df["batter_name"].isin(selected_hitters)]
-        elif "batter" in df.columns:
+        elif "batter" in df_options.columns:
+            selected_hitters = []
             st.caption("Batter name lookup not available — download batter lookup in Data Manager.")
 
-        if "batter_team" in df.columns:
-            batter_teams = sorted(df["batter_team"].dropna().unique().tolist())
+        if "batter_team" in df_options.columns:
+            batter_teams = sorted(df_options["batter_team"].dropna().unique().tolist())
             selected_batter_teams = st.multiselect("Hitter Team", batter_teams)
-            if selected_batter_teams:
-                df = df[df["batter_team"].isin(selected_batter_teams)]
 
-        if "stand" in df.columns:
-            stand_options = sorted(df["stand"].dropna().unique().tolist())
+        if "stand" in df_options.columns:
+            stand_options = sorted(df_options["stand"].dropna().unique().tolist())
             selected_stand = st.multiselect("Batter Hand", stand_options)
-            if selected_stand:
-                df = df[df["stand"].isin(selected_stand)]
 
         st.markdown("---")
         st.markdown("**Pitch**")
 
-        if "pitch_desc" in df.columns:
-            pitch_types = sorted(df["pitch_desc"].dropna().unique().tolist())
+        if "pitch_desc" in df_options.columns:
+            pitch_types = sorted(df_options["pitch_desc"].dropna().unique().tolist())
             selected_pitches = st.multiselect("Pitch Type", pitch_types)
-            if selected_pitches:
-                df = df[df["pitch_desc"].isin(selected_pitches)]
 
-        if "release_speed" in df.columns:
+        if "release_speed" in df_options.columns:
             speed_min, speed_max = st.slider(
                 "Pitch Speed (mph)", min_value=40, max_value=105,
                 value=(40, 105), key="speed_range",
             )
-            df = df[(df["release_speed"] >= speed_min) & (df["release_speed"] <= speed_max)]
 
-        if "events" in df.columns:
-            events = sorted(df["events"].dropna().unique().tolist())
+        if "events" in df_options.columns:
+            events = sorted(df_options["events"].dropna().unique().tolist())
             selected_events = st.multiselect("Event Outcome", events)
-            if selected_events:
-                df = df[df["events"].isin(selected_events)]
 
-        if "description" in df.columns:
-            descriptions = sorted(df["description"].dropna().unique().tolist())
+        if "description" in df_options.columns:
+            descriptions = sorted(df_options["description"].dropna().unique().tolist())
             selected_desc = st.multiselect("Pitch Result (ball, strike, etc.)", descriptions)
-            if selected_desc:
-                df = df[df["description"].isin(selected_desc)]
 
-        if "balls" in df.columns and "strikes" in df.columns:
+        if "balls" in df_options.columns and "strikes" in df_options.columns:
             st.markdown("**Count Filter**")
             balls_filter   = st.multiselect("Balls",   [0, 1, 2, 3], key="balls_f")
             strikes_filter = st.multiselect("Strikes", [0, 1, 2],    key="strikes_f")
-            if balls_filter:
-                df = df[df["balls"].isin(balls_filter)]
-            if strikes_filter:
-                df = df[df["strikes"].isin(strikes_filter)]
 
-        if "zone_desc" in df.columns:
-            zones = sorted(df["zone_desc"].dropna().unique().tolist())
+        if "zone_desc" in df_options.columns:
+            zones = sorted(df_options["zone_desc"].dropna().unique().tolist())
             selected_zones = st.multiselect("Strike Zone", zones)
-            if selected_zones:
-                df = df[df["zone_desc"].isin(selected_zones)]
 
-        if "launch_speed" in df.columns:
+        if "launch_speed" in df_options.columns:
             min_ev = st.slider("Min Exit Velocity", 0, 120, 0)
-            df = df[(df["launch_speed"] >= min_ev) | df["launch_speed"].isna()]
+
+    # ── Apply all filters after widgets are rendered ─────────────────────────
+    if "game_date" in df.columns and len(date_range) == 2:
+        df = df[
+            (df["game_date"].dt.date >= date_range[0]) &
+            (df["game_date"].dt.date <= date_range[1])
+        ]
+    if "player_name" in df.columns and selected_pitchers:
+        df = df[df["player_name"].isin(selected_pitchers)]
+    if "pitcher_team" in df.columns and selected_pitcher_teams:
+        df = df[df["pitcher_team"].isin(selected_pitcher_teams)]
+    if "p_throws" in df.columns and selected_throws:
+        df = df[df["p_throws"].isin(selected_throws)]
+    if "batter_name" in df.columns and selected_hitters:
+        df = df[df["batter_name"].isin(selected_hitters)]
+    if "batter_team" in df.columns and selected_batter_teams:
+        df = df[df["batter_team"].isin(selected_batter_teams)]
+    if "stand" in df.columns and selected_stand:
+        df = df[df["stand"].isin(selected_stand)]
+    if "pitch_desc" in df.columns and selected_pitches:
+        df = df[df["pitch_desc"].isin(selected_pitches)]
+    if "release_speed" in df.columns:
+        df = df[(df["release_speed"] >= speed_min) & (df["release_speed"] <= speed_max)]
+    if "events" in df.columns and selected_events:
+        df = df[df["events"].isin(selected_events)]
+    if "description" in df.columns and selected_desc:
+        df = df[df["description"].isin(selected_desc)]
+    if "balls" in df.columns and balls_filter:
+        df = df[df["balls"].isin(balls_filter)]
+    if "strikes" in df.columns and strikes_filter:
+        df = df[df["strikes"].isin(strikes_filter)]
+    if "zone_desc" in df.columns and selected_zones:
+        df = df[df["zone_desc"].isin(selected_zones)]
+    if "launch_speed" in df.columns:
+        df = df[(df["launch_speed"] >= min_ev) | df["launch_speed"].isna()]
 
     # ── Main area ────────────────────────────────────────────────────────────
     st.success(f"**{len(df):,}** pitches loaded from local data.")
@@ -246,6 +254,12 @@ if not df_raw.empty:
 
     MAX_PLOT_POINTS = 2000  # cap scatter for performance
 
+    TAB20 = [
+        "#1f77b4","#aec7e8","#ff7f0e","#ffbb78","#2ca02c","#98df8a","#d62728","#ff9896",
+        "#9467bd","#c5b0d5","#8c564b","#c49c94","#e377c2","#f7b6d2","#7f7f7f","#c7c7c7",
+        "#bcbd22","#dbdb8d","#17becf","#9edae5",
+    ]
+
     def get_color_map(df, color_by):
         """Return (series, color_dict) for the chosen color dimension."""
         if color_by == "Pitch Type" and "pitch_desc" in df.columns:
@@ -255,46 +269,49 @@ if not df_raw.empty:
         elif color_by == "Pitch Result" and "description" in df.columns:
             series = df["description"].fillna("Unknown")
             cats   = series.unique().tolist()
-            palette = plt.cm.get_cmap("tab20", len(cats))
-            cmap   = {c: palette(i) for i, c in enumerate(cats)}
+            cmap   = {c: TAB20[i % len(TAB20)] for i, c in enumerate(cats)}
         elif color_by == "Event Outcome" and "events" in df.columns:
             series = df["events"].fillna("—")
             cats   = series.unique().tolist()
-            palette = plt.cm.get_cmap("tab20", len(cats))
-            cmap   = {c: palette(i) for i, c in enumerate(cats)}
+            cmap   = {c: TAB20[i % len(TAB20)] for i, c in enumerate(cats)}
         else:
             series = pd.Series(["All"] * len(df), index=df.index)
             cmap   = {"All": "#1f77b4"}
         return series, cmap
 
-    # ── Strike zone helper ───────────────────────────────────────────────────
-    def draw_strike_zone(ax):
-        """Draw standard strike zone rectangle and inner grid."""
-        sz_left, sz_right = -0.83, 0.83   # ft from centre of plate
-        sz_bot,  sz_top   =  1.50, 3.60   # approximate average sz_bot/top
-
-        # Outer box
-        zone = patches.Rectangle(
-            (sz_left, sz_bot),
-            sz_right - sz_left,
-            sz_top - sz_bot,
-            linewidth=2, edgecolor="#CCCCCC", facecolor="none", zorder=2,
-        )
-        ax.add_patch(zone)
-
-        # Inner 3×3 grid lines
+    # ── Plotly strike zone shapes helper ────────────────────────────────────
+    def strike_zone_shapes():
+        """Return a list of Plotly shape dicts for the strike zone overlay."""
+        sz_left, sz_right = -0.83, 0.83
+        sz_bot,  sz_top   =  1.50, 3.60
         third_w = (sz_right - sz_left) / 3
         third_h = (sz_top   - sz_bot)  / 3
-        for i in (1, 2):
-            x = sz_left + i * third_w
-            ax.plot([x, x], [sz_bot, sz_top], color="#AAAAAA", linewidth=0.7, zorder=2)
-            y = sz_bot + i * third_h
-            ax.plot([sz_left, sz_right], [y, y], color="#AAAAAA", linewidth=0.7, zorder=2)
+        shapes = [
+            # Outer box
+            dict(type="rect", x0=sz_left, x1=sz_right, y0=sz_bot, y1=sz_top,
+                 line=dict(color="#CCCCCC", width=2), fillcolor="rgba(0,0,0,0)"),
+            # Inner vertical grid lines
+            dict(type="line", x0=sz_left+third_w, x1=sz_left+third_w, y0=sz_bot, y1=sz_top,
+                 line=dict(color="#AAAAAA", width=1)),
+            dict(type="line", x0=sz_left+2*third_w, x1=sz_left+2*third_w, y0=sz_bot, y1=sz_top,
+                 line=dict(color="#AAAAAA", width=1)),
+            # Inner horizontal grid lines
+            dict(type="line", x0=sz_left, x1=sz_right, y0=sz_bot+third_h, y1=sz_bot+third_h,
+                 line=dict(color="#AAAAAA", width=1)),
+            dict(type="line", x0=sz_left, x1=sz_right, y0=sz_bot+2*third_h, y1=sz_bot+2*third_h,
+                 line=dict(color="#AAAAAA", width=1)),
+            # Home plate trapezoid
+            dict(type="path",
+                 path="M -0.708 0 L 0.708 0 L 0.708 0.25 L 0 0.5 L -0.708 0.25 Z",
+                 line=dict(color="#AAAAAA", width=1.2), fillcolor="rgba(0,0,0,0)"),
+        ]
+        return shapes
 
-        # Home plate (trapezoid outline)
-        plate_x = [-0.708, 0.708, 0.708, 0.0, -0.708, -0.708]
-        plate_y = [0.0,    0.0,   0.25,  0.5,  0.25,   0.0  ]
-        ax.plot(plate_x, plate_y, color="#AAAAAA", linewidth=1.2, zorder=2)
+    PLOTLY_DARK = dict(
+        paper_bgcolor="#111111",
+        plot_bgcolor="#111111",
+        font_color="#CCCCCC",
+    )
 
     # ─────────────────────────────────────────────────────────────────────────
     if chart_view == "Pitch Location (Strike Zone)":
@@ -307,51 +324,47 @@ if not df_raw.empty:
                 st.caption(f"Displaying a random sample of {MAX_PLOT_POINTS:,} pitches for performance.")
 
             color_series, cmap = get_color_map(plot_df, color_by)
+            plot_df = plot_df.copy()
+            plot_df["_color_cat"] = color_series.values
 
-            fig, ax = plt.subplots(figsize=(6, 7))
-            fig.patch.set_facecolor("#111111")
-            ax.set_facecolor("#111111")
-
+            fig = go.Figure()
             for cat, color in cmap.items():
-                mask = color_series == cat
-                ax.scatter(
-                    plot_df.loc[mask, "plate_x"],
-                    plot_df.loc[mask, "plate_z"],
-                    c=[color], label=cat,
-                    s=18, alpha=0.55, linewidths=0,
-                    zorder=3,
-                )
+                mask = plot_df["_color_cat"] == cat
+                sub = plot_df[mask]
+                fig.add_trace(go.Scatter(
+                    x=sub["plate_x"], y=sub["plate_z"],
+                    mode="markers",
+                    name=cat,
+                    marker=dict(color=color, size=5, opacity=0.55, line=dict(width=0)),
+                    hovertemplate=(
+                        "<b>%{text}</b><br>x: %{x:.2f} ft<br>z: %{y:.2f} ft<extra></extra>"
+                    ),
+                    text=sub.get("pitch_desc", pd.Series([""] * len(sub))),
+                ))
 
-            ax.set_xlim(-2.5, 2.5)
-            ax.set_ylim(0.5, 5.0)
-
-            draw_strike_zone(ax)
-
-            ax.set_xlabel("Horizontal Position (ft)", color="#CCCCCC")
-            ax.set_ylabel("Height (ft)", color="#CCCCCC")
-            ax.tick_params(colors="#CCCCCC")
-            for spine in ax.spines.values():
-                spine.set_edgecolor("#333333")
-
-            ax.text(0, 4.75, "Catcher's perspective",
-                    ha="center", va="top", color="#888888", fontsize=8)
-
-            legend = ax.legend(
-                fontsize=7, loc="upper right", framealpha=0.3,
-                labelcolor="#CCCCCC", facecolor="#222222", edgecolor="#444444",
+            fig.update_layout(
+                **PLOTLY_DARK,
+                shapes=strike_zone_shapes(),
+                xaxis=dict(range=[-2.5, 2.5], title="Horizontal Position (ft)",
+                           gridcolor="#333333", zerolinecolor="#444444", scaleanchor="y", scaleratio=1),
+                yaxis=dict(range=[0.5, 5.0], title="Height (ft)",
+                           gridcolor="#333333", zerolinecolor="#444444"),
+                legend=dict(bgcolor="#222222", bordercolor="#444444", borderwidth=1, font_size=11),
+                annotations=[dict(x=0, y=4.85, text="Catcher's perspective", showarrow=False,
+                                  font=dict(color="#888888", size=11), xanchor="center")],
+                margin=dict(l=50, r=20, t=30, b=50),
+                height=550,
             )
-            st.pyplot(fig, use_container_width=True)
-            plt.close(fig)
+            col_map, _ = st.columns([1, 1])
+            with col_map:
+                st.plotly_chart(fig, use_container_width=True)
 
     # ─────────────────────────────────────────────────────────────────────────
     else:  # Movement Profile
         if not has_movement:
             st.warning("No `pfx_x` / `pfx_z` columns found in dataset.")
         else:
-            plot_df = df.dropna(subset=["pfx_x", "pfx_z", "pitch_desc"])
-
-            # Convert to inches (Statcast pfx is in feet)
-            plot_df = plot_df.copy()
+            plot_df = df.dropna(subset=["pfx_x", "pfx_z", "pitch_desc"]).copy()
             plot_df["pfx_x_in"] = plot_df["pfx_x"] * 12
             plot_df["pfx_z_in"] = plot_df["pfx_z"] * 12
 
@@ -360,8 +373,9 @@ if not df_raw.empty:
                 st.caption(f"Displaying a random sample of {MAX_PLOT_POINTS:,} pitches for performance.")
 
             color_series, cmap = get_color_map(plot_df, color_by)
+            plot_df["_color_cat"] = color_series.values
 
-            # Season-average reference circles per pitch type
+            # Season-average reference per pitch type (from full filtered df)
             avg_movement = (
                 df.dropna(subset=["pfx_x", "pfx_z", "pitch_desc"])
                 .groupby("pitch_desc")
@@ -373,65 +387,54 @@ if not df_raw.empty:
 
             show_refs = st.checkbox("Show season-average reference markers", value=True)
 
-            fig, ax = plt.subplots(figsize=(7, 7))
-            fig.patch.set_facecolor("#111111")
-            ax.set_facecolor("#111111")
+            fig = go.Figure()
 
-            # Reference lines
-            ax.axhline(0, color="#444444", linewidth=0.8, zorder=1)
-            ax.axvline(0, color="#444444", linewidth=0.8, zorder=1)
+            # Reference crosshairs
+            fig.add_hline(y=0, line_color="#444444", line_width=1)
+            fig.add_vline(x=0, line_color="#444444", line_width=1)
 
             # Scatter individual pitches
             for cat, color in cmap.items():
-                mask = color_series == cat
-                ax.scatter(
-                    plot_df.loc[mask, "pfx_x_in"],
-                    plot_df.loc[mask, "pfx_z_in"],
-                    c=[color], label=cat,
-                    s=16, alpha=0.45, linewidths=0,
-                    zorder=3,
-                )
+                mask = plot_df["_color_cat"] == cat
+                sub = plot_df[mask]
+                fig.add_trace(go.Scatter(
+                    x=sub["pfx_x_in"], y=sub["pfx_z_in"],
+                    mode="markers",
+                    name=cat,
+                    marker=dict(color=color, size=5, opacity=0.45, line=dict(width=0)),
+                    hovertemplate="<b>%{text}</b><br>HB: %{x:.1f} in<br>VB: %{y:.1f} in<extra></extra>",
+                    text=sub.get("pitch_desc", pd.Series([""] * len(sub))),
+                ))
 
-            # Season-average reference markers
+            # Season-average reference circles + labels
             if show_refs:
                 for _, row in avg_movement.iterrows():
                     pt = row["pitch_desc"]
                     color = PITCH_COLORS.get(pt, "#999999")
-                    circle = plt.Circle(
-                        (row["avg_x_in"], row["avg_z_in"]),
-                        radius=1.2,
-                        color=color, fill=False,
-                        linewidth=2.0, zorder=5,
+                    fig.add_shape(type="circle",
+                        x0=row["avg_x_in"] - 1.2, x1=row["avg_x_in"] + 1.2,
+                        y0=row["avg_z_in"] - 1.2, y1=row["avg_z_in"] + 1.2,
+                        line=dict(color=color, width=2),
                     )
-                    ax.add_patch(circle)
-                    ax.annotate(
-                        pt,
-                        xy=(row["avg_x_in"], row["avg_z_in"]),
-                        xytext=(row["avg_x_in"], row["avg_z_in"] + 1.8),
-                        color=color, fontsize=6.5, ha="center", va="bottom",
-                        zorder=6,
+                    fig.add_annotation(
+                        x=row["avg_x_in"], y=row["avg_z_in"] + 2.2,
+                        text=pt, showarrow=False,
+                        font=dict(color=color, size=9), xanchor="center",
                     )
 
-            ax.set_xlabel("Horizontal Break (in) — ← 3B side       1B side →", color="#CCCCCC")
-            ax.set_ylabel("Vertical Break (in) — induced", color="#CCCCCC")
-            ax.tick_params(colors="#CCCCCC")
-            for spine in ax.spines.values():
-                spine.set_edgecolor("#333333")
-
-            ax.set_xlim(-25, 25)
-            ax.set_ylim(-25, 25)
-
-            legend = ax.legend(
-                fontsize=7, loc="upper right", framealpha=0.3,
-                labelcolor="#CCCCCC", facecolor="#222222", edgecolor="#444444",
+            fig.update_layout(
+                **PLOTLY_DARK,
+                title=dict(text=f"Movement Profile — {season} Season  (catcher's perspective)",
+                           font=dict(color="#CCCCCC", size=13)),
+                xaxis=dict(range=[-25, 25], title="Horizontal Break (in) — ← 3B side       1B side →",
+                           gridcolor="#333333", zerolinecolor="#444444", scaleanchor="y", scaleratio=1),
+                yaxis=dict(range=[-25, 25], title="Vertical Break (in) — induced",
+                           gridcolor="#333333", zerolinecolor="#444444"),
+                legend=dict(bgcolor="#222222", bordercolor="#444444", borderwidth=1, font_size=11),
+                margin=dict(l=60, r=20, t=50, b=60),
+                height=600,
             )
-            ax.set_title(
-                f"Movement Profile — {season} Season  (catcher's perspective)",
-                color="#CCCCCC", fontsize=10,
-            )
-
-            st.pyplot(fig, use_container_width=True)
-            plt.close(fig)
+            st.plotly_chart(fig, use_container_width=True)
 
     # ── Pitch type breakdown ─────────────────────────────────────────────────
     if "pitch_desc" in df.columns:
@@ -441,28 +444,32 @@ if not df_raw.empty:
         pitch_counts["Pct"] = pitch_counts["Count"] / pitch_counts["Count"].sum() * 100
         pitch_counts = pitch_counts.sort_values("Pct", ascending=True)
 
-        fig_pt, ax_pt = plt.subplots(figsize=(6, max(2, len(pitch_counts) * 0.45)))
-        fig_pt.patch.set_facecolor("#111111")
-        ax_pt.set_facecolor("#111111")
-
         colors = [PITCH_COLORS.get(p, "#999999") for p in pitch_counts["Pitch Type"]]
-        bars = ax_pt.barh(pitch_counts["Pitch Type"], pitch_counts["Pct"], color=colors, height=0.6)
+        labels = [
+            f"{row['Pct']:.1f}%  ({int(row['Count']):,})"
+            for _, row in pitch_counts.iterrows()
+        ]
 
-        for bar, (_, row) in zip(bars, pitch_counts.iterrows()):
-            ax_pt.text(
-                bar.get_width() + 0.5, bar.get_y() + bar.get_height() / 2,
-                f"{row['Pct']:.1f}%  ({int(row['Count']):,})",
-                va="center", ha="left", color="#CCCCCC", fontsize=8,
-            )
-
-        ax_pt.set_xlabel("Usage %", color="#CCCCCC")
-        ax_pt.tick_params(colors="#CCCCCC")
-        ax_pt.set_xlim(0, pitch_counts["Pct"].max() * 1.35)
-        for spine in ax_pt.spines.values():
-            spine.set_edgecolor("#333333")
-
-        st.pyplot(fig_pt, use_container_width=True)
-        plt.close(fig_pt)
+        fig_pt = go.Figure(go.Bar(
+            x=pitch_counts["Pct"],
+            y=pitch_counts["Pitch Type"],
+            orientation="h",
+            marker_color=colors,
+            text=labels,
+            textposition="outside",
+            textfont=dict(color="#CCCCCC", size=11),
+            hovertemplate="<b>%{y}</b><br>Usage: %{x:.1f}%<extra></extra>",
+        ))
+        fig_pt.update_layout(
+            **PLOTLY_DARK,
+            xaxis=dict(title="Usage %", range=[0, pitch_counts["Pct"].max() * 1.4],
+                       gridcolor="#333333", zerolinecolor="#444444"),
+            yaxis=dict(gridcolor="#333333", zerolinecolor="#444444"),
+            margin=dict(l=120, r=80, t=20, b=40),
+            height=max(200, len(pitch_counts) * 40 + 60),
+            showlegend=False,
+        )
+        st.plotly_chart(fig_pt, use_container_width=True)
 
     st.markdown("---")
 
