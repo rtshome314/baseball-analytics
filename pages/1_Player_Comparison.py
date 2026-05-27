@@ -39,6 +39,17 @@ def save_bookmarks(bookmarks):
         json.dump(bookmarks, f, indent=2)
 from utils.charts import create_percentile_chart
 
+_NAME_SUFFIXES = {"jr", "sr", "ii", "iii", "iv"}
+
+def strip_name_suffixes(name: str) -> str:
+    """Strip common suffixes (Jr., Sr., II, etc.) from a player name so
+    Baseball Reference names can be matched against the split summary,
+    which is built from pybaseball lookups that omit suffixes."""
+    parts = name.strip().split()
+    while parts and parts[-1].rstrip(".").lower() in _NAME_SUFFIXES:
+        parts = parts[:-1]
+    return " ".join(parts)
+
 st.set_page_config(page_title="Player Comparison", page_icon="⚾", layout="wide")
 inject_custom_css()
 render_nav_back()
@@ -375,15 +386,15 @@ if not trad_stats.empty:
                             parts = pname.split(" ", 1)
                             if len(parts) == 2:
                                 p_split = chart_split_stats[
-                                    chart_split_stats[name_col_split].apply(normalize).str.contains(normalize(parts[-1]), case=False, na=False)
+                                    chart_split_stats[name_col_split].apply(normalize).str.contains(normalize(strip_name_suffixes(pname).split()[-1]), case=False, na=False)
                                 ]
                                 if len(p_split) > 1:
                                     p_split = chart_split_stats[
-                                        chart_split_stats[name_col_split].apply(normalize) == normalize(pname)
+                                        chart_split_stats[name_col_split].apply(normalize) == normalize(strip_name_suffixes(pname))
                                     ]
                             else:
                                 p_split = chart_split_stats[
-                                    chart_split_stats[name_col_split].apply(normalize).str.contains(normalize(pname), case=False, na=False)
+                                    chart_split_stats[name_col_split].apply(normalize).str.contains(normalize(strip_name_suffixes(pname)), case=False, na=False)
                                 ]
 
                             if not p_split.empty:
@@ -517,9 +528,9 @@ if not trad_stats.empty:
                                     }).reset_index()
                                     p_sum[f"ev_{ev_threshold}_rate"] = (p_sum[f"ev_{ev_threshold}_count"] / p_sum["PA"] * 100).round(1)
                                     
-                                    p_match = p_sum[p_sum["batter_name"].apply(normalize).str.contains(normalize(pname.split(" ")[-1]), case=False, na=False)]
+                                    p_match = p_sum[p_sum["batter_name"].apply(normalize).str.contains(normalize(strip_name_suffixes(pname).split()[-1]), case=False, na=False)]
                                     if len(p_match) > 1:
-                                        p_match = p_sum[p_sum["batter_name"].apply(normalize) == normalize(pname)]
+                                        p_match = p_sum[p_sum["batter_name"].apply(normalize) == normalize(strip_name_suffixes(pname))]
                                     
                                     if not p_match.empty:
                                         p_row = p_match.iloc[0]
@@ -561,11 +572,11 @@ if not trad_stats.empty:
 
                                         p_monthly = monthly_summary[
                                             monthly_summary["batter_name"].apply(normalize_monthly).str.contains(
-                                                normalize_monthly(pname.split(" ")[-1]), case=False, na=False
+                                                normalize_monthly(strip_name_suffixes(pname).split()[-1]), case=False, na=False
                                             )
                                         ]
                                         if len(p_monthly) > 1:
-                                            exact = monthly_summary[monthly_summary["batter_name"].apply(normalize_monthly) == normalize_monthly(pname)]
+                                            exact = monthly_summary[monthly_summary["batter_name"].apply(normalize_monthly) == normalize_monthly(strip_name_suffixes(pname))]
                                             if not exact.empty:
                                                 p_monthly = exact
 
@@ -639,10 +650,10 @@ if not trad_stats.empty:
                 matched_rows = []
                 for pname in selected_players:
                     player_splits = split_stats[
-                        split_stats[name_col_split].apply(normalize).str.contains(normalize(pname.split(" ")[-1]), case=False, na=False)
+                        split_stats[name_col_split].apply(normalize).str.contains(normalize(strip_name_suffixes(pname).split()[-1]), case=False, na=False)
                     ]
                     if len(player_splits) > 1:
-                        exact = split_stats[split_stats[name_col_split].apply(normalize) == normalize(pname)]
+                        exact = split_stats[split_stats[name_col_split].apply(normalize) == normalize(strip_name_suffixes(pname))]
                         if not exact.empty:
                             player_splits = exact
                     if not player_splits.empty:
@@ -771,11 +782,11 @@ if not trad_stats.empty:
                             }
                             p_split_my = yr_split_df[
                                 yr_split_df["batter_name"].apply(normalize_my).str.contains(
-                                    normalize_my(my_player.split(" ")[-1]), case=False, na=False
+                                    normalize_my(strip_name_suffixes(my_player).split()[-1]), case=False, na=False
                                 )
                             ]
                             if len(p_split_my) > 1:
-                                exact = yr_split_df[yr_split_df["batter_name"].apply(normalize_my) == normalize_my(my_player)]
+                                exact = yr_split_df[yr_split_df["batter_name"].apply(normalize_my) == normalize_my(strip_name_suffixes(my_player))]
                                 if not exact.empty:
                                     p_split_my = exact
 
