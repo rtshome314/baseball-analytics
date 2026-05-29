@@ -49,8 +49,8 @@ def get_data_status(season=2025):
         ("statcast_pitching_agg", f"statcast_pitching_agg_{season}.parquet"),
         ("statcast_batter_pcts", f"statcast_batter_pcts_{season}.parquet"),
         ("statcast_pitcher_pcts", f"statcast_pitcher_pcts_{season}.parquet"),
-        ("team_batting", f"team_batting_{season}.parquet"),
-        ("team_pitching", f"team_pitching_{season}.parquet"),
+        # ("team_batting", f"team_batting_{season}.parquet"),   # TODO: re-enable with 5_Team_Comparison
+        # ("team_pitching", f"team_pitching_{season}.parquet"), # TODO: re-enable with 5_Team_Comparison
         ("batter_lookup", f"batter_lookup_{season}.parquet"),
         ("split_summary", f"split_summary_{season}.parquet"),
     ]
