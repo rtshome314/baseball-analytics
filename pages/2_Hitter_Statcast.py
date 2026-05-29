@@ -250,7 +250,7 @@ if not df.empty:
         group_options = []
         if hitter_name_col in df.columns:
             group_options.append(hitter_name_col)
-        for col in ["events", "pitch_type", "stand", "p_throws", "player_name"]:
+        for col in ["player_name", "events", "pitch_type", "stand", "p_throws"]:
             if col in df.columns:
                 group_options.append(col)
 
@@ -286,37 +286,110 @@ if not df.empty:
                 metric_options.append(col)
                 metric_labels[col] = label
 
-        selected_metrics = st.multiselect(
-            "Metrics to aggregate",
-            metric_options,
-            default=metric_options[:3] if len(metric_options) >= 3 else metric_options,
-            format_func=lambda x: metric_labels.get(x, x),
-            key="agg_metrics",
-        )
+        # Metric + function pairs
+        st.markdown("#### 📊 Select Metrics")
+        st.caption("Each row is one output column — pick a metric and the function to apply to it.")
 
-        # Aggregation functions
-        agg_funcs = st.multiselect(
-            "Aggregation functions",
-            ["count", "mean", "median", "max", "min", "std"],
-            default=["count", "mean", "max"],
-            key="agg_funcs",
-        )
+        num_metric_rows = st.number_input("Number of metrics", min_value=1, max_value=8, value=2, step=1, key="agg_num_metrics")
+        metric_pairs = []
+        agg_funcs_available = ["count", "mean", "median", "sum", "max", "min", "std"]
+        for i in range(int(num_metric_rows)):
+            mc1, mc2 = st.columns([3, 2])
+            with mc1:
+                m_col = st.selectbox(f"Metric #{i+1}", metric_options, format_func=lambda x: metric_labels.get(x, x), key=f"agg_metric_col_{i}")
+            with mc2:
+                m_func = st.selectbox(f"Function #{i+1}", agg_funcs_available, key=f"agg_metric_func_{i}")
+            metric_pairs.append((m_col, m_func))
+
+        # Derive flat lists for HAVING preview compatibility
+        selected_metrics = list(dict.fromkeys(m for m, _ in metric_pairs))
+        agg_funcs = list(dict.fromkeys(f for _, f in metric_pairs))
+
+        # WHERE clause — pre-aggregation filter on raw rows
+        st.markdown("#### 🔍 WHERE — Filter Rows Before Grouping")
+        st.caption("Filter individual rows before aggregating — e.g. only count batted balls with Exit Velo > 95.")
+
+        num_where_pre = st.number_input("Number of conditions", min_value=0, max_value=5, value=0, step=1, key="agg_where_pre_count")
+
+        where_pre_conditions = []
+        if num_where_pre > 0:
+            for i in range(int(num_where_pre)):
+                wc1, wc2, wc3 = st.columns([3, 2, 3])
+                with wc1:
+                    wpre_col = st.selectbox(f"Column #{i+1}", metric_options, format_func=lambda x: metric_labels.get(x, x), key=f"agg_wpre_col_{i}")
+                with wc2:
+                    wpre_op = st.selectbox(f"Operator #{i+1}", [">", ">=", "<", "<=", "==", "!="], key=f"agg_wpre_op_{i}")
+                with wc3:
+                    wpre_val = st.text_input(f"Value #{i+1}", value="", key=f"agg_wpre_val_{i}")
+                if wpre_col and wpre_op and wpre_val.strip():
+                    where_pre_conditions.append((wpre_col, wpre_op, wpre_val.strip()))
 
         # Min count filter
         min_count = st.number_input("Minimum count (filter out small groups)", min_value=1, value=1, key="agg_min")
 
+        # HAVING clause — post-aggregation filter on group results
+        st.markdown("#### 📐 HAVING — Filter Groups After Aggregating")
+        st.caption("Filter the aggregated results — e.g. only show groups where count >= 10.")
+
+        num_where = st.number_input("Number of conditions", min_value=0, max_value=5, value=0, step=1, key="agg_where_count")
+
+        where_conditions = []
+        if num_where > 0:
+            result_col_options = []
+            for g in (selected_groups or []):
+                result_col_options.append(group_labels.get(g, g))
+            for m_col, m_func in metric_pairs:
+                result_col_options.append(f"{metric_labels.get(m_col, m_col)}_{m_func}")
+
+            if result_col_options:
+                for i in range(int(num_where)):
+                    wc1, wc2, wc3 = st.columns([3, 2, 3])
+                    with wc1:
+                        where_col = st.selectbox(f"Column #{i+1}", result_col_options, key=f"agg_where_col_{i}")
+                    with wc2:
+                        where_op = st.selectbox(f"Operator #{i+1}", [">", ">=", "<", "<=", "==", "!="], key=f"agg_where_op_{i}")
+                    with wc3:
+                        where_val = st.text_input(f"Value #{i+1}", value="", key=f"agg_where_val_{i}")
+                    if where_col and where_op and where_val.strip() != "":
+                        where_conditions.append((where_col, where_op, where_val.strip()))
+            else:
+                st.caption("Select groups and metrics above to enable HAVING filters.")
+
     with agg_tab2:
-        if selected_groups and selected_metrics and agg_funcs:
-            # Build aggregation
-            agg_dict = {}
-            for metric in selected_metrics:
-                agg_dict[metric] = agg_funcs
-
+        if selected_groups and metric_pairs:
             try:
-                result = df.groupby(selected_groups).agg(agg_dict)
+                # Apply WHERE pre-filter on raw rows
+                df_agg = df.copy()
+                for (wpre_col, wpre_op, wpre_val) in where_pre_conditions:
+                    try:
+                        typed_val = float(wpre_val)
+                        if wpre_op == ">":    df_agg = df_agg[df_agg[wpre_col] > typed_val]
+                        elif wpre_op == ">=": df_agg = df_agg[df_agg[wpre_col] >= typed_val]
+                        elif wpre_op == "<":  df_agg = df_agg[df_agg[wpre_col] < typed_val]
+                        elif wpre_op == "<=": df_agg = df_agg[df_agg[wpre_col] <= typed_val]
+                        elif wpre_op == "==": df_agg = df_agg[df_agg[wpre_col] == typed_val]
+                        elif wpre_op == "!=": df_agg = df_agg[df_agg[wpre_col] != typed_val]
+                    except Exception as we:
+                        st.warning(f"WHERE condition '{wpre_col} {wpre_op} {wpre_val}': {we}")
 
-                # Flatten column names
+                # Build agg dict from pairs — each metric gets only its chosen function
+                agg_dict = {}
+                for m_col, m_func in metric_pairs:
+                    agg_dict.setdefault(m_col, [])
+                    if m_func not in agg_dict[m_col]:
+                        agg_dict[m_col].append(m_func)
+
+                result = df_agg.groupby(selected_groups).agg(agg_dict)
+
+                # Flatten — only keep the exact pairs requested
+                pair_col_names = {}
+                for m_col, m_func in metric_pairs:
+                    flat_name = f"{metric_labels.get(m_col, m_col)}_{m_func}"
+                    pair_col_names[(m_col, m_func)] = flat_name
                 result.columns = [f"{metric_labels.get(col, col)}_{func}" for col, func in result.columns]
+                # Drop any extra columns not in requested pairs
+                keep = list(dict.fromkeys(pair_col_names.values()))
+                result = result[[c for c in keep if c in result.columns]]
                 result = result.reset_index()
 
                 # Rename group columns
@@ -326,6 +399,31 @@ if not df.empty:
                 count_cols = [c for c in result.columns if c.endswith("_count")]
                 if count_cols and min_count > 1:
                     result = result[result[count_cols[0]] >= min_count]
+
+                # Apply WHERE conditions
+                where_errors = []
+                for (wcol, wop, wval) in where_conditions:
+                    if wcol not in result.columns:
+                        where_errors.append(f"Column '{wcol}' not found in results.")
+                        continue
+                    try:
+                        typed_val = float(wval) if result[wcol].dtype in ["float64", "float32", "int64", "int32"] else wval
+                        if wop == ">":
+                            result = result[result[wcol] > typed_val]
+                        elif wop == ">=":
+                            result = result[result[wcol] >= typed_val]
+                        elif wop == "<":
+                            result = result[result[wcol] < typed_val]
+                        elif wop == "<=":
+                            result = result[result[wcol] <= typed_val]
+                        elif wop == "==":
+                            result = result[result[wcol] == typed_val]
+                        elif wop == "!=":
+                            result = result[result[wcol] != typed_val]
+                    except Exception as we:
+                        where_errors.append(f"Condition '{wcol} {wop} {wval}': {we}")
+                for err in where_errors:
+                    st.warning(err)
 
                 # Round numeric columns
                 for col in result.columns:

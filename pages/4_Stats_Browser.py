@@ -139,6 +139,274 @@ if not df.empty:
     st.dataframe(df_sorted.reset_index(drop=True), use_container_width=True, height=700,
                  column_config={"Name": st.column_config.TextColumn(pinned=True)})
 
+    # --- Aggregation Builder ---
+    st.markdown("---")
+    st.markdown("### 🧮 Aggregation Builder")
+    st.markdown("Group and summarize the stats table — like running a SQL query.")
+
+    agg_tab1, agg_tab2, agg_tab3 = st.tabs(["⚙️ Build Query", "📋 Results", "🏆 Top N per Group"])
+
+    with agg_tab1:
+        # Group by options — categorical columns that make sense to group on
+        group_candidate_cols = []
+        group_col_labels = {}
+
+        for col, label in [
+            ("Name", "Player Name"),
+            ("Team", "Team"),
+            ("Pos", "Position (raw)"),
+            ("Age", "Age"),
+            ("stand", "Batter Hand"),
+            ("p_throws", "Pitcher Hand"),
+        ]:
+            if col in df_sorted.columns:
+                group_candidate_cols.append(col)
+                group_col_labels[col] = label
+
+        # Add derived position cols if Pos exists
+        if "Pos" in df_sorted.columns:
+            df_sorted["Primary_Pos"] = df_sorted["Pos"].apply(
+                lambda x: x.lstrip("*").split("/")[0] if isinstance(x, str) else None
+            )
+            if "Primary_Pos" not in group_candidate_cols:
+                group_candidate_cols.insert(1, "Primary_Pos")
+                group_col_labels["Primary_Pos"] = "Primary Position"
+
+        selected_agg_groups = st.multiselect(
+            "Group by",
+            group_candidate_cols,
+            default=["Team"] if "Team" in group_candidate_cols else [],
+            format_func=lambda x: group_col_labels.get(x, x),
+            key="sb_agg_group",
+        )
+
+        # Metric options — numeric cols
+        sb_numeric_cols = [
+            c for c in df_sorted.columns
+            if df_sorted[c].dtype in ["float64", "int64", "float32", "int32"]
+            and c not in ["Age"]
+        ]
+        # Friendly labels where we know them
+        sb_metric_labels = {
+            "PA": "PA", "AB": "AB", "H": "Hits", "HR": "HR", "R": "Runs",
+            "RBI": "RBI", "SB": "SB", "BB": "BB", "SO": "SO", "AVG": "AVG",
+            "OBP": "OBP", "SLG": "SLG", "OPS": "OPS", "WAR": "WAR",
+            "IP": "IP", "W": "W", "L": "L", "SV": "SV", "ERA": "ERA",
+            "WHIP": "WHIP", "K/9": "K/9", "BB/9": "BB/9",
+            "H/162": "H/162", "HR/162": "HR/162",
+            "G": "G", "GS": "GS",
+        }
+
+        # Metric + function pairs
+        st.markdown("#### 📊 Select Metrics")
+        st.caption("Each row is one output column — pick a metric and the function to apply to it.")
+
+        sb_num_metric_rows = st.number_input("Number of metrics", min_value=1, max_value=8, value=2, step=1, key="sb_agg_num_metrics")
+        sb_metric_pairs = []
+        sb_agg_funcs_available = ["count", "mean", "median", "sum", "max", "min", "std"]
+        for i in range(int(sb_num_metric_rows)):
+            mc1, mc2 = st.columns([3, 2])
+            with mc1:
+                sb_m_col = st.selectbox(f"Metric #{i+1}", sb_numeric_cols, format_func=lambda x: sb_metric_labels.get(x, x), key=f"sb_agg_metric_col_{i}")
+            with mc2:
+                sb_m_func = st.selectbox(f"Function #{i+1}", sb_agg_funcs_available, key=f"sb_agg_metric_func_{i}")
+            sb_metric_pairs.append((sb_m_col, sb_m_func))
+
+        # Derive flat lists for HAVING preview compatibility
+        selected_agg_metrics = list(dict.fromkeys(m for m, _ in sb_metric_pairs))
+        sb_agg_funcs = list(dict.fromkeys(f for _, f in sb_metric_pairs))
+
+        sb_min_count = st.number_input("Minimum count (filter out small groups)", min_value=1, value=1, key="sb_agg_min")
+
+        # WHERE clause — pre-aggregation filter on raw rows
+        st.markdown("#### 🔍 WHERE — Filter Rows Before Grouping")
+        st.caption("Filter individual player rows before aggregating — e.g. only count players with OPS > 0.800.")
+
+        sb_num_where_pre = st.number_input("Number of conditions", min_value=0, max_value=5, value=0, step=1, key="sb_where_pre_count")
+
+        sb_where_pre_conditions = []
+        if sb_num_where_pre > 0:
+            for i in range(int(sb_num_where_pre)):
+                wc1, wc2, wc3 = st.columns([3, 2, 3])
+                with wc1:
+                    wpre_col = st.selectbox(f"Column #{i+1}", sb_numeric_cols, format_func=lambda x: sb_metric_labels.get(x, x), key=f"sb_wpre_col_{i}")
+                with wc2:
+                    wpre_op = st.selectbox(f"Operator #{i+1}", [">", ">=", "<", "<=", "==", "!="], key=f"sb_wpre_op_{i}")
+                with wc3:
+                    wpre_val = st.text_input(f"Value #{i+1}", value="", key=f"sb_wpre_val_{i}")
+                if wpre_col and wpre_op and wpre_val.strip():
+                    sb_where_pre_conditions.append((wpre_col, wpre_op, wpre_val.strip()))
+
+        # HAVING clause — post-aggregation filter on group results
+        st.markdown("#### 📐 HAVING — Filter Groups After Aggregating")
+        st.caption("Filter the aggregated results — e.g. only show teams with count >= 5.")
+
+        sb_num_where = st.number_input("Number of conditions", min_value=0, max_value=5, value=0, step=1, key="sb_where_count")
+
+        sb_where_conditions = []
+        if sb_num_where > 0:
+            result_col_preview = []
+            for g in (selected_agg_groups or []):
+                result_col_preview.append(group_col_labels.get(g, g))
+            for sb_m_col, sb_m_func in sb_metric_pairs:
+                result_col_preview.append(f"{sb_metric_labels.get(sb_m_col, sb_m_col)}_{sb_m_func}")
+
+            if result_col_preview:
+                for i in range(int(sb_num_where)):
+                    wc1, wc2, wc3 = st.columns([3, 2, 3])
+                    with wc1:
+                        w_col = st.selectbox(f"Column #{i+1}", result_col_preview, key=f"sb_where_col_{i}")
+                    with wc2:
+                        w_op = st.selectbox(f"Operator #{i+1}", [">", ">=", "<", "<=", "==", "!="], key=f"sb_where_op_{i}")
+                    with wc3:
+                        w_val = st.text_input(f"Value #{i+1}", value="", key=f"sb_where_val_{i}")
+                    if w_col and w_op and w_val.strip():
+                        sb_where_conditions.append((w_col, w_op, w_val.strip()))
+            else:
+                st.caption("Select groups and metrics above to enable HAVING filters.")
+
+    with agg_tab2:
+        if selected_agg_groups and sb_metric_pairs:
+            try:
+                # Apply WHERE pre-filter on raw player rows
+                df_agg = df_sorted.copy()
+                for (wpre_col, wpre_op, wpre_val) in sb_where_pre_conditions:
+                    try:
+                        typed_val = float(wpre_val)
+                        if wpre_op == ">":    df_agg = df_agg[df_agg[wpre_col] > typed_val]
+                        elif wpre_op == ">=": df_agg = df_agg[df_agg[wpre_col] >= typed_val]
+                        elif wpre_op == "<":  df_agg = df_agg[df_agg[wpre_col] < typed_val]
+                        elif wpre_op == "<=": df_agg = df_agg[df_agg[wpre_col] <= typed_val]
+                        elif wpre_op == "==": df_agg = df_agg[df_agg[wpre_col] == typed_val]
+                        elif wpre_op == "!=": df_agg = df_agg[df_agg[wpre_col] != typed_val]
+                    except Exception as we:
+                        st.warning(f"WHERE condition '{wpre_col} {wpre_op} {wpre_val}': {we}")
+
+                # Build agg dict from pairs — each metric gets only its chosen function
+                sb_agg_dict = {}
+                for sb_m_col, sb_m_func in sb_metric_pairs:
+                    sb_agg_dict.setdefault(sb_m_col, [])
+                    if sb_m_func not in sb_agg_dict[sb_m_col]:
+                        sb_agg_dict[sb_m_col].append(sb_m_func)
+
+                sb_result = df_agg.groupby(selected_agg_groups).agg(sb_agg_dict)
+                sb_result.columns = [f"{sb_metric_labels.get(col, col)}_{func}" for col, func in sb_result.columns]
+
+                # Keep only the exact pairs requested
+                sb_keep = list(dict.fromkeys(f"{sb_metric_labels.get(m, m)}_{f}" for m, f in sb_metric_pairs))
+                sb_result = sb_result[[c for c in sb_keep if c in sb_result.columns]]
+                sb_result = sb_result.reset_index()
+
+                # Rename group columns to friendly labels
+                sb_result = sb_result.rename(columns=group_col_labels)
+
+                # Min count filter
+                sb_count_cols = [c for c in sb_result.columns if c.endswith("_count")]
+                if sb_count_cols and sb_min_count > 1:
+                    sb_result = sb_result[sb_result[sb_count_cols[0]] >= sb_min_count]
+
+                # Apply WHERE conditions
+                for (wcol, wop, wval) in sb_where_conditions:
+                    if wcol not in sb_result.columns:
+                        st.warning(f"Column '{wcol}' not found in results.")
+                        continue
+                    try:
+                        typed = float(wval) if sb_result[wcol].dtype in ["float64", "float32", "int64", "int32"] else wval
+                        ops = {">": "__gt__", ">=": "__ge__", "<": "__lt__", "<=": "__le__", "==": "__eq__", "!=": "__ne__"}
+                        sb_result = sb_result[getattr(sb_result[wcol], ops[wop])(typed)]
+                    except Exception as we:
+                        st.warning(f"Condition '{wcol} {wop} {wval}': {we}")
+
+                # Round floats
+                for col in sb_result.columns:
+                    if sb_result[col].dtype in ["float64", "float32"]:
+                        sb_result[col] = sb_result[col].round(3)
+
+                # Sort by first count col descending
+                if sb_count_cols:
+                    sb_result = sb_result.sort_values(sb_count_cols[0], ascending=False)
+
+                st.markdown(f"**{len(sb_result):,} groups**")
+                st.dataframe(sb_result.reset_index(drop=True), use_container_width=True, height=500)
+
+                sb_agg_csv = sb_result.to_csv(index=False)
+                st.download_button("📥 Download aggregated data", sb_agg_csv,
+                                   file_name=f"stats_agg_{season}.csv", mime="text/csv", key="sb_agg_download")
+
+            except Exception as e:
+                st.error(f"Aggregation error: {e}")
+        else:
+            st.info("Configure your query in the **Build Query** tab, then come back here to see results.")
+
+    with agg_tab3:
+        st.markdown("Return the top N players within each group — e.g. the top 3 OPS by team.")
+
+        topn_col1, topn_col2 = st.columns(2)
+        with topn_col1:
+            # Group by — categorical only (no Name)
+            topn_group_opts = [c for c in group_candidate_cols if c != "Name"]
+            topn_group = st.selectbox(
+                "Group by",
+                topn_group_opts,
+                format_func=lambda x: group_col_labels.get(x, x),
+                key="sb_topn_group",
+            )
+        with topn_col2:
+            topn_rank_col = st.selectbox(
+                "Rank by",
+                sb_numeric_cols,
+                format_func=lambda x: sb_metric_labels.get(x, x),
+                key="sb_topn_rank",
+            )
+
+        topn_col3, topn_col4 = st.columns(2)
+        with topn_col3:
+            topn_n = st.number_input("Top N per group", min_value=1, max_value=25, value=3, step=1, key="sb_topn_n")
+        with topn_col4:
+            topn_asc = st.checkbox("Ascending (bottom N instead)", value=False, key="sb_topn_asc")
+
+        # Which columns to show in result
+        topn_display_candidates = ["Name", "Team", "Primary_Pos", "Pos", "Age"] + sb_numeric_cols
+        topn_display_cols = st.multiselect(
+            "Columns to show",
+            [c for c in topn_display_candidates if c in df_sorted.columns],
+            default=[c for c in ["Name", "Team", topn_rank_col] if c in df_sorted.columns],
+            key="sb_topn_cols",
+        )
+
+        if topn_group and topn_rank_col:
+            try:
+                topn_df = df_sorted.copy()
+                # Auto-exclude multi-team rows (2TM, 3TM, etc.)
+                if topn_group == "Team" and "Team" in topn_df.columns:
+                    topn_df = topn_df[~topn_df["Team"].str.match(r"^\d+TM$", na=False)]
+
+                topn_result = (
+                    topn_df
+                    .dropna(subset=[topn_rank_col])
+                    .sort_values(topn_rank_col, ascending=topn_asc)
+                    .groupby(topn_group, group_keys=False)
+                    .head(int(topn_n))
+                    .sort_values([topn_group, topn_rank_col], ascending=[True, topn_asc])
+                )
+                show_cols = [topn_group] + [c for c in topn_display_cols if c != topn_group]
+                show_cols = [c for c in show_cols if c in topn_result.columns]
+                topn_result = topn_result[show_cols].reset_index(drop=True)
+
+                # Round floats
+                for col in topn_result.columns:
+                    if topn_result[col].dtype in ["float64", "float32"]:
+                        topn_result[col] = topn_result[col].round(3)
+
+                st.markdown(f"**{len(topn_result):,} rows** — top {int(topn_n)} per {group_col_labels.get(topn_group, topn_group)}")
+                st.dataframe(topn_result, use_container_width=True, height=500)
+
+                topn_csv = topn_result.to_csv(index=False)
+                st.download_button("📥 Download", topn_csv,
+                                   file_name=f"topn_{season}.csv", mime="text/csv", key="sb_topn_download")
+            except Exception as e:
+                st.error(f"Top N error: {e}")
+
     # --- Custom Charts ---
     st.markdown("---")
     st.markdown("### 📈 Custom Charts")

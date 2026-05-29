@@ -460,7 +460,7 @@
         "Util"
       ],
       "mlb_team": "COL",
-      "status": "DTD"
+      "status": "Active"
     },
     "reid detmers": {
       "yahoo_name": "Reid Detmers",
@@ -847,7 +847,7 @@
         "IL"
       ],
       "mlb_team": "TOR",
-      "status": "IL15"
+      "status": "IL60"
     },
     "spencer schwellenbach": {
       "yahoo_name": "Spencer Schwellenbach",
@@ -1386,7 +1386,7 @@
         "IL"
       ],
       "mlb_team": "NYM",
-      "status": "IL10"
+      "status": "IL60"
     },
     "giancarlo stanton": {
       "yahoo_name": "Giancarlo Stanton",
@@ -1811,7 +1811,7 @@
         "Util"
       ],
       "mlb_team": "CLE",
-      "status": "Active"
+      "status": "NA"
     },
     "shohei ohtani": {
       "yahoo_name": "Shohei Ohtani (Pitcher)",
@@ -1854,7 +1854,7 @@
         "Util"
       ],
       "mlb_team": "LAD",
-      "status": "DTD"
+      "status": "Active"
     },
     "davis martin": {
       "yahoo_name": "Davis Martin",
@@ -1884,7 +1884,7 @@
         "P"
       ],
       "mlb_team": "DET",
-      "status": "Active"
+      "status": "DTD"
     },
     "michael wacha": {
       "yahoo_name": "Michael Wacha",
@@ -1996,7 +1996,7 @@
         "IL"
       ],
       "mlb_team": "TOR",
-      "status": "IL10"
+      "status": "IL60"
     },
     "keibert ruiz": {
       "yahoo_name": "Keibert Ruiz",
@@ -2074,7 +2074,7 @@
         "Util"
       ],
       "mlb_team": "PHI",
-      "status": "Active"
+      "status": "DTD"
     },
     "kyle stowers": {
       "yahoo_name": "Kyle Stowers",
@@ -2427,7 +2427,7 @@
         "Util"
       ],
       "mlb_team": "LAD",
-      "status": "Active"
+      "status": "DTD"
     },
     "luke raley": {
       "yahoo_name": "Luke Raley",
@@ -2607,7 +2607,7 @@
         "Util"
       ],
       "mlb_team": "AZ",
-      "status": "Active"
+      "status": "DTD"
     },
     "otto lopez": {
       "yahoo_name": "Otto Lopez",
@@ -3017,7 +3017,7 @@
         "P"
       ],
       "mlb_team": "MIA",
-      "status": "Active"
+      "status": "DTD"
     },
     "reynaldo lopez": {
       "yahoo_name": "Reynaldo L\u00f3pez",
@@ -3095,7 +3095,7 @@
         "Util"
       ],
       "mlb_team": "TOR",
-      "status": "DTD"
+      "status": "Active"
     },
     "jazz chisholm jr.": {
       "yahoo_name": "Jazz Chisholm Jr.",
@@ -3130,7 +3130,7 @@
         "Util"
       ],
       "mlb_team": "PIT",
-      "status": "Active"
+      "status": "DTD"
     },
     "jakob marsee": {
       "yahoo_name": "Jakob Marsee",
@@ -3460,5 +3460,5 @@
       "Pts Against": 1189.5
     }
   ],
-  "last_refresh": "2026-05-26T21:42:55.105811"
+  "last_refresh": "2026-05-28T20:58:36.820467"
 }
