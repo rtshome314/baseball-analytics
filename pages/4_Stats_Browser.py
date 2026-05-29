@@ -9,6 +9,25 @@ from utils.data_loader import load_batting_stats, load_pitching_stats, load_batt
 
 BOOKMARK_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "sb_bookmarks.json")
 
+# --- MLB team → division/league mapping ---
+TEAM_DIVISIONS = {
+    # AL East
+    "NYY": "AL East", "BOS": "AL East", "TBR": "AL East", "TOR": "AL East", "BAL": "AL East",
+    # AL Central
+    "CLE": "AL Central", "MIN": "AL Central", "CHW": "AL Central", "KCR": "AL Central", "DET": "AL Central",
+    # AL West
+    "HOU": "AL West", "SEA": "AL West", "TEX": "AL West", "LAA": "AL West", "ATH": "AL West",
+    # NL East
+    "ATL": "NL East", "NYM": "NL East", "PHI": "NL East", "MIA": "NL East", "WSN": "NL East",
+    # NL Central
+    "MIL": "NL Central", "CHC": "NL Central", "STL": "NL Central", "PIT": "NL Central", "CIN": "NL Central",
+    # NL West
+    "LAD": "NL West", "SDP": "NL West", "SFG": "NL West", "ARI": "NL West", "COL": "NL West",
+}
+
+DIVISIONS = ["AL East", "AL Central", "AL West", "NL East", "NL Central", "NL West"]
+LEAGUES = ["AL", "NL"]
+
 def load_bookmarks():
     if os.path.exists(BOOKMARK_FILE):
         with open(BOOKMARK_FILE, "r") as f:
@@ -92,6 +111,25 @@ if not df.empty:
 
     with filters:
         if "Team" in df.columns:
+            # --- League filter ---
+            selected_leagues = st.multiselect("Filter by League", LEAGUES, key="sb_leagues")
+            # --- Division filter ---
+            selected_divisions = st.multiselect("Filter by Division", DIVISIONS, key="sb_divisions")
+
+            # Apply league/division filters
+            if selected_leagues or selected_divisions:
+                def get_division(team):
+                    return TEAM_DIVISIONS.get(team, None)
+                def get_league(team):
+                    div = TEAM_DIVISIONS.get(team, None)
+                    return div[:2] if div else None
+
+                if selected_divisions:
+                    df = df[df["Team"].apply(get_division).isin(selected_divisions)]
+                elif selected_leagues:
+                    df = df[df["Team"].apply(get_league).isin(selected_leagues)]
+
+            # --- Team filter (still works independently) ---
             teams = sorted(df["Team"].dropna().unique().tolist())
             bm_data = st.session_state.get("sb_bm_data", {})
             default_teams = [t for t in bm_data.get("teams", []) if t in teams]

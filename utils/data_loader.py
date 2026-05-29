@@ -318,6 +318,7 @@ def _scrape_br_batting(season, table_id):
     # Drop header rows that repeat inside the table
     df = df[df["Rk"].astype(str).str.strip() != "Rk"].copy()
     df = df[df["Rk"].astype(str).str.strip() != ""].copy()
+    df["Rk"] = range(1, len(df) + 1)
     # Batting table uses "Player", pitching uses "Name" — handle both
     name_col = "Player" if "Player" in df.columns else "Name"
     df = df.dropna(subset=[name_col])
@@ -355,6 +356,7 @@ def _scrape_br_pitching(season, table_id):
     name_col = "Name" if "Name" in df.columns else "Player"
     df = df[df["Rk"].astype(str).str.strip() != "Rk"].copy()
     df = df[df["Rk"].astype(str).str.strip() != ""].copy()
+    df["Rk"] = range(1, len(df) + 1)
     df = df.dropna(subset=[name_col])
     df[name_col] = df[name_col].str.replace(r"[*#]", "", regex=True).str.strip()
     # Standardize to "Name"
@@ -708,15 +710,15 @@ def refresh_all_data(season=2025, full_statcast=False):
         df = download_statcast_batting_agg(season)
         results["sc_batting"] = len(df)
     
-    with st.spinner("Downloading team batting stats..."):
-        df = download_team_batting(season)
-        results["team_batting"] = len(df)
+    # TODO: re-enable with 5_Team_Comparison
+    # with st.spinner("Downloading team batting stats..."):
+    #     df = download_team_batting(season)
+    #     results["team_batting"] = len(df)
 
-    
-
-    with st.spinner("Downloading team pitching stats..."):
-        df = download_team_pitching(season)
-        results["team_pitching"] = len(df)
+    # TODO: re-enable with 5_Team_Comparison
+    # with st.spinner("Downloading team pitching stats..."):
+    #     df = download_team_pitching(season)
+    #     results["team_pitching"] = len(df)
 
     with st.spinner("Building batter name lookup (this may take a minute)..."):
         df = download_batter_lookup(season)
