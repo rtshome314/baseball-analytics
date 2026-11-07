@@ -9,7 +9,7 @@ Local Streamlit app for exploring MLB data (Statcast pitch-level data, Baseball 
 The owner's to-do list. Add items when asked; remove an item (or move it to "Done recently") once it is finished and verified. Keep this list short; if it passes ~12 items, move it to `TODO.md` and leave a pointer here. Numbers in brackets refer to "Known quirks" below.
 
 1. **Test the Ask page with a real API key.** Built 2026-11-06 but never run against the Claude API (no key on the machine). Add `anthropic_api_key` to `data/user_settings.json` or set `ANTHROPIC_API_KEY`, then try the sample questions and check answers against the queries shown.
-2. **Commit 2026-11-06 work.** Ask page (`pages/9_Ask.py`, `utils/sql_assistant.py`, `utils/schema_guide.md`), `config.py`, `app.py`, `requirements.txt`, the BRef encoding fix in `utils/data_loader.py` and the 16 repaired `batting/pitching_stats*` parquet files, `CLAUDE.md`, `.claude/launch.json`.
+2. **Merge branch `ask-page-and-name-fix` into `main` and push** when ready. Pushing `main` redeploys the Streamlit Cloud app. `data/yahoo_fantasy_data.json` was left out of the commit on purpose (the local copy is the empty cache from the last refresh).
 3. **Fantasy AVG always shows 0**: read `BA` instead of `AVG` in `build_player_scoring_table`. [1]
 4. **Player Comparison metrics that never appear** because of FanGraphs-style column names (AVG, wOBA, K/9…). Remap to BRef names or remove. [2]
 5. **Empty Yahoo cache** after the last Smart Refresh (`league_info: null`). Find the cause; don't save an empty result over good data. [5]
@@ -17,6 +17,7 @@ The owner's to-do list. Add items when asked; remove an item (or move it to "Don
 
 Done recently:
 - 2026-11-06: BRef accented names fixed (scraper + stored files).
+- 2026-11-06: Ask page + name fix committed on branch `ask-page-and-name-fix` (66202c1).
 
 ## Run it
 
