@@ -41,6 +41,9 @@ YAHOO_CLIENT_SECRET = _get_secret("YAHOO_CLIENT_SECRET")
 YAHOO_LEAGUE_ID = _get_secret("YAHOO_LEAGUE_ID")
 YAHOO_REDIRECT_URI = _user.get("yahoo_redirect_uri", "https://localhost")
 
+# Anthropic API key for the "Ask" page: st.secrets / user_settings.json ("anthropic_api_key") / env var
+ANTHROPIC_API_KEY = _get_secret("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_API_KEY", "")
+
 # Update this each season (or set via user settings)
 DEFAULT_SEASON = _user.get("default_season", 2026)
 AVAILABLE_SEASONS = _user.get("available_seasons", [2026, 2025, 2024, 2023])

@@ -310,6 +310,7 @@ def _scrape_br_batting(season, table_id):
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
     response = requests.get(url, headers=headers, timeout=30)
     response.raise_for_status()
+    response.encoding = "utf-8"  # BRef pages are UTF-8; requests otherwise guesses Latin-1 and garbles accents
     soup = BeautifulSoup(response.text, "html.parser")
     table = soup.find("table", {"id": table_id})
     if table is None:
@@ -346,6 +347,7 @@ def _scrape_br_pitching(season, table_id):
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
     response = requests.get(url, headers=headers, timeout=30)
     response.raise_for_status()
+    response.encoding = "utf-8"  # BRef pages are UTF-8; requests otherwise guesses Latin-1 and garbles accents
     soup = BeautifulSoup(response.text, "html.parser")
     table = soup.find("table", {"id": table_id})
     if table is None:

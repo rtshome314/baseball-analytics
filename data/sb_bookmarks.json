@@ -5,5 +5,19 @@
     "teams": [
       "PHI"
     ]
+  },
+  "trade teams": {
+    "stat_type": "Batting",
+    "min_pa": 50,
+    "teams": [
+      "CIN",
+      "NYM",
+      "SFG",
+      "COL",
+      "BAL",
+      "KCR",
+      "LAA",
+      "PHI"
+    ]
   }
 }
