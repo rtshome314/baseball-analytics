@@ -61,6 +61,7 @@ LIMIT 10                     -- how many rows
 | You want… | Table |
 |---|---|
 | Season totals (HR, RBI, AVG, OPS, WAR, ERA, wins, saves) | `batting`, `pitching` |
+| Team totals, records and standings | `team_batting`, `team_pitching` |
 | Postseason totals | `batting_post`, `pitching_post` |
 | Anything about individual pitches or batted balls: velocity, exit velocity, pitch type, dates, counts, innings, matchups | `statcast` |
 | Batter splits by pitcher hand, home/away, month | `splits` |
@@ -125,16 +126,46 @@ ORDER BY SV DESC
 LIMIT 15
 ```
 
-### Team totals
-Excludes the combined `2TM` rows so traded players are counted once per team.
+### Standings
+Wins and losses are in `team_pitching`; runs scored are in `team_batting`. Change the year, or remove the `Div` line to see all 30 teams.
 
 ```sql
-SELECT Tm, SUM(HR) AS HR, SUM(R) AS R, SUM(SB) AS SB,
-       ROUND(SUM(H) / SUM(AB), 3) AS BA
-FROM batting
-WHERE season = 2026 AND Tm IS NOT NULL AND Tm NOT LIKE '%TM'
-GROUP BY Tm
-ORDER BY HR DESC
+SELECT p.Div, p.Team, p.W, p.L, ROUND(p."W-L%", 3) AS pct,
+       b.R AS runs_scored, p.R AS runs_allowed, b.R - p.R AS run_diff
+FROM team_pitching p
+JOIN team_batting b ON b.season = p.season AND b.Team = p.Team
+WHERE p.season = 2026
+  AND p.Div = 'AL West'
+ORDER BY p.Div, p.W DESC
+```
+
+### Team batting and pitching leaders
+Change the stat to sort by (`HR`, `OPS`, `SB`, `"R/G"`; for pitching `ERA`, `FIP`, `SO9`, `WHIP`).
+
+```sql
+SELECT Team, "R/G", HR, SB, ROUND(BA, 3) AS BA, ROUND(OBP, 3) AS OBP, ROUND(OPS, 3) AS OPS, "OPS+"
+FROM team_batting
+WHERE season = 2026
+ORDER BY OPS DESC
+LIMIT 10
+```
+
+```sql
+SELECT Team, W, L, ERA, FIP, WHIP, SO9, BB9, SV
+FROM team_pitching
+WHERE season = 2026
+ORDER BY ERA
+LIMIT 10
+```
+
+### A team across seasons
+
+```sql
+SELECT p.season, p.W, p.L, b.R AS runs_scored, p.R AS runs_allowed, b.HR, ROUND(b.OPS, 3) AS OPS, p.ERA
+FROM team_pitching p
+JOIN team_batting b ON b.season = p.season AND b.Team = p.Team
+WHERE p.Team = 'Seattle Mariners'
+ORDER BY p.season
 ```
 
 ### Leaders at a position

@@ -17,6 +17,7 @@ The owner's to-do list. Add items when asked; remove an item (or move it to "Don
 
 Done recently:
 - 2026-11-06: BRef accented names fixed (scraper + stored files).
+- 2026-11-06: Team Comparison page restored with Baseball Reference team stats (2023–2026), added to Smart Refresh and the query tool.
 - 2026-11-06: Ask page + name fix committed on branch `ask-page-and-name-fix` (66202c1).
 
 ## Run it
@@ -43,10 +44,11 @@ pages/                      Streamlit multipage app (only top-level files appear
   2_Hitter_Statcast.py      Batted-ball explorer (filters, charts, SQL-style aggregation builder)
   3_Pitches_Statcast_Viewer.py  Pitch-level explorer: strike-zone location, movement profile, pitch mix
   4_Stats_Browser.py        Baseball Reference stats table, league/division/position filters, aggregation builder, custom charts
+  5_Team_Comparison.py     Standings, team batting/pitching (BRef team totals) with 1-30 ranks, team Statcast (computed from statcast via DuckDB, cached)
   7_Fantasy.py              Yahoo fantasy: roster, teams, scoring, standings, weekly trends, draft board, matchups
   8_Data_Manager.py         Data status table, Smart Refresh (incremental) and Full Re-download
   9_Ask.py                  Plain-language questions: Claude writes DuckDB SQL via a run_sql tool, results + queries shown; manual SQL box in sidebar
-  hidden/                   5_Team_Comparison.py, 6_Correlations.py — NOT in nav (parked; see "Disabled features")
+  hidden/                   6_Correlations.py — NOT in nav (parked; see "Disabled features")
   archive/                  Dated snapshots of old page versions. Gitignored. Do not edit or import.
 utils/
   data_loader.py            ALL downloading, loading, metadata, split-summary building, shared constants (largest file)
@@ -72,7 +74,8 @@ data/                       Local data store (see below)
 | Player ID lookup | `pybaseball.playerid_reverse_lookup` on batter IDs found in Statcast | `batter_lookup_{season}` (columns `batter`, `batter_name`) |
 | Derived | `build_split_summary()` aggregates Statcast by batter × pitcher hand × home/away × month | `split_summary_{season}` (counts and sums, so splits can be recombined exactly) |
 | Yahoo Fantasy API | OAuth2, XML responses | `yahoo_fantasy_data.json` (1-hour cache), `yahoo_weekly_player_stats.parquet`, `fantasy_batters/pitchers.parquet`, `fantasy_standings.json` |
-| FanGraphs (team stats) | `pybaseball.team_batting/pitching` | `team_{batting,pitching}_{season}` — only 2024/2025 exist; refresh is disabled (see below) |
+| Baseball Reference team totals | `_scrape_br_team` (tables `teams_standard_batting/pitching` on the same league pages) | `team_{batting,pitching}_br_{season}` (30 rows; adds `season, Tm, sc_team, Lg, Div` via `TEAM_INFO`). Download refuses to save fewer than 30 teams |
+| FanGraphs team stats (dead) | `pybaseball.team_batting/pitching` returns 0 rows as of 2026-11-06 | old `team_{batting,pitching}_{2024,2025}.parquet` remain on disk, unused |
 
 Other files in `data/`: `metadata.json` (last-refresh timestamps and row counts, keyed like `{dataset}_{season}_last_refresh`; also `statcast_{season}_last_date` for incremental updates), `bookmarks.json` (Player Comparison groups, including auto-generated `Fantasy: <team>` entries), `sb_bookmarks.json` (Stats Browser saved filters), `user_settings.json`.
 
@@ -110,7 +113,7 @@ Seasons supported: 2023–2026 (`AVAILABLE_SEASONS`). Current default: 2026. 202
 - **Downloads**: each `download_*` function catches exceptions, shows `st.error`, writes a parquet, and updates `metadata.json` via `_load_metadata/_save_metadata`. New datasets should do the same.
 - **Styling**: dark palette `#0E1117` bg, `#1A1D23` cards, `#E87A2C` accent. Use `CHART_TEMPLATE` from `utils/charts.py` for Plotly figures. Percentile colors come from `get_percentile_color`.
 - **Persistence**: small JSON files in `data/` (bookmarks), larger tables as parquet. `st.session_state` holds loaded results between reruns.
-- **Page file names**: `N_Name.py`, number controls sidebar order. 5 and 6 are intentionally unused in nav.
+- **Page file names**: `N_Name.py`, number controls sidebar order. 6 is intentionally unused in nav.
 
 ## Recipes for common changes
 
@@ -136,15 +139,14 @@ Confirmed by reading code and data:
 9. **Statcast-based fantasy points are approximations**: steals taken from `events` (`stolen_base_2b`, `caught_stealing_2b`) are likely incomplete, pitcher outs are estimated from end-of-PA events, and WP/BK/induced-GIDP are set to 0. Season-long BRef-based scoring is accurate; date-range and weekly player views are not.
 10. **Performance**: full Statcast parquet files (~100 MB each) are read into memory on every page load; almost nothing uses `st.cache_data` (only a batter lookup in page 3). Adding caching to `load_*` functions would speed up every page.
 11. **Season hard-coding**: 2023–2026 and 2026 week dates are scattered through several files (see rollover recipe).
-12. `build_split_summary` has a duplicated `ev_90_count` line (harmless). `pages/5` and `6` are parked in `hidden/` and `get_data_status` has team datasets commented out ("re-enable with 5_Team_Comparison"). FanGraphs team data is flagged in code as "likely blocked"; cached 2024/2025 files exist. If re-enabling, check the FanGraphs scrape still works.
+12. `build_split_summary` has a duplicated `ev_90_count` line (harmless). `pages/hidden/6_Correlations.py` is parked. FanGraphs team data via pybaseball is broken (returns 0 rows); team stats now come from Baseball Reference. If a new team or name appears (relocation/rename), add it to `TEAM_INFO` in `data_loader.py` or the team download will refuse to save.
 13. Player Comparison "qualified" thresholds use 3.1 PA / 1.0 IP per team game, estimated from the max `G` in the table.
 14. `data/` is not gitignored and contains ~100 MB parquet files; how the repo handles them (Git LFS? `.gitattributes` exists) **(unverified)**.
 
 ## Disabled / parked features
 
-- `pages/hidden/5_Team_Comparison.py` — team batting/pitching/Statcast comparison from FanGraphs team data.
 - `pages/hidden/6_Correlations.py` — scatter/distribution/linear-regression explorer with custom `df.eval` columns.
-- Both are intact and only need to be moved back into `pages/` (and the team datasets uncommented in `data_loader.py`, `8_Data_Manager.py`) to return.
+- It is intact and only needs to be moved back into `pages/` to return. (Team Comparison was restored 2026-11-06 using Baseball Reference team data.)
 
 ## Working agreements for Claude
 

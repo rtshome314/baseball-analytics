@@ -49,8 +49,8 @@ def get_data_status(season=2025):
         ("statcast_pitching_agg", f"statcast_pitching_agg_{season}.parquet"),
         ("statcast_batter_pcts", f"statcast_batter_pcts_{season}.parquet"),
         ("statcast_pitcher_pcts", f"statcast_pitcher_pcts_{season}.parquet"),
-        # ("team_batting", f"team_batting_{season}.parquet"),   # TODO: re-enable with 5_Team_Comparison
-        # ("team_pitching", f"team_pitching_{season}.parquet"), # TODO: re-enable with 5_Team_Comparison
+        ("team_batting", f"team_batting_br_{season}.parquet"),
+        ("team_pitching", f"team_pitching_br_{season}.parquet"),
         ("batter_lookup", f"batter_lookup_{season}.parquet"),
         ("split_summary", f"split_summary_{season}.parquet"),
     ]
@@ -374,6 +374,37 @@ def _scrape_br_pitching(season, table_id):
     return df.reset_index(drop=True)
 
 
+def _scrape_br_team(season, kind):
+    """Scrape the team-totals table ('batting' or 'pitching') from Baseball Reference's league page.
+    Returns one row per team (league-average/total rows removed) with a 'Team' column."""
+    import requests
+    from bs4 import BeautifulSoup
+    from io import StringIO
+
+    url = f"https://www.baseball-reference.com/leagues/majors/{season}-standard-{kind}.shtml"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
+    response = requests.get(url, headers=headers, timeout=30)
+    response.raise_for_status()
+    response.encoding = "utf-8"
+    soup = BeautifulSoup(response.text, "html.parser")
+    table = soup.find("table", {"id": f"teams_standard_{kind}"})
+    if table is None:
+        return pd.DataFrame()
+    df = pd.read_html(StringIO(str(table)))[0]
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = df.columns.get_level_values(-1)
+    team_col = "Tm" if "Tm" in df.columns else "Team"
+    df = df.rename(columns={team_col: "Team"})
+    df["Team"] = df["Team"].astype(str).str.strip()
+    # Drop repeated header rows and league total/average rows
+    df = df[~df["Team"].isin(["Tm", "Team", "nan", ""])]
+    df = df[~df["Team"].str.contains("Average|Total", case=False, regex=True)].copy()
+    for col in df.columns:
+        if col != "Team":
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+    return df.reset_index(drop=True)
+
+
 def download_batting_stats(season=2025):
     ensure_data_dir()
     try:
@@ -469,43 +500,79 @@ def download_statcast_pitching_agg(season=2025):
         st.error(f"Error downloading Statcast pitching aggregates: {e}")
         return pd.DataFrame()
     
-def download_team_batting(season=2025):
-    from pybaseball import team_batting
+# Baseball Reference full team name -> (BRef code, Statcast/Savant code, league, division)
+TEAM_INFO = {
+    "Arizona Diamondbacks": ("ARI", "AZ", "NL", "NL West"),
+    "Athletics": ("ATH", "ATH", "AL", "AL West"),
+    "Oakland Athletics": ("OAK", "ATH", "AL", "AL West"),  # Statcast uses ATH for all years
+    "Atlanta Braves": ("ATL", "ATL", "NL", "NL East"),
+    "Baltimore Orioles": ("BAL", "BAL", "AL", "AL East"),
+    "Boston Red Sox": ("BOS", "BOS", "AL", "AL East"),
+    "Chicago Cubs": ("CHC", "CHC", "NL", "NL Central"),
+    "Chicago White Sox": ("CHW", "CWS", "AL", "AL Central"),
+    "Cincinnati Reds": ("CIN", "CIN", "NL", "NL Central"),
+    "Cleveland Guardians": ("CLE", "CLE", "AL", "AL Central"),
+    "Colorado Rockies": ("COL", "COL", "NL", "NL West"),
+    "Detroit Tigers": ("DET", "DET", "AL", "AL Central"),
+    "Houston Astros": ("HOU", "HOU", "AL", "AL West"),
+    "Kansas City Royals": ("KCR", "KC", "AL", "AL Central"),
+    "Los Angeles Angels": ("LAA", "LAA", "AL", "AL West"),
+    "Los Angeles Dodgers": ("LAD", "LAD", "NL", "NL West"),
+    "Miami Marlins": ("MIA", "MIA", "NL", "NL East"),
+    "Milwaukee Brewers": ("MIL", "MIL", "NL", "NL Central"),
+    "Minnesota Twins": ("MIN", "MIN", "AL", "AL Central"),
+    "New York Mets": ("NYM", "NYM", "NL", "NL East"),
+    "New York Yankees": ("NYY", "NYY", "AL", "AL East"),
+    "Philadelphia Phillies": ("PHI", "PHI", "NL", "NL East"),
+    "Pittsburgh Pirates": ("PIT", "PIT", "NL", "NL Central"),
+    "San Diego Padres": ("SDP", "SD", "NL", "NL West"),
+    "San Francisco Giants": ("SFG", "SF", "NL", "NL West"),
+    "Seattle Mariners": ("SEA", "SEA", "AL", "AL West"),
+    "St. Louis Cardinals": ("STL", "STL", "NL", "NL Central"),
+    "Tampa Bay Rays": ("TBR", "TB", "AL", "AL East"),
+    "Texas Rangers": ("TEX", "TEX", "AL", "AL West"),
+    "Toronto Blue Jays": ("TOR", "TOR", "AL", "AL East"),
+    "Washington Nationals": ("WSN", "WSH", "NL", "NL East"),
+}
+
+
+def _download_team_table(season, kind):
+    """Download Baseball Reference team totals ('batting' or 'pitching') to team_{kind}_br_{season}.parquet.
+    Never overwrites saved data with an empty or incomplete result."""
     ensure_data_dir()
-    # Load existing data if available to avoid losing it on FanGraphs errors
-    filepath = os.path.join(DATA_DIR, f"team_batting_{season}.parquet")
+    name = f"team_{kind}"
+    filepath = os.path.join(DATA_DIR, f"team_{kind}_br_{season}.parquet")
     try:
-        df = team_batting(season)
+        df = _scrape_br_team(season, kind)
+        if len(df) < 30:
+            raise ValueError(f"expected 30 teams, got {len(df)}")
+        info = df["Team"].map(TEAM_INFO)
+        if info.isna().any():
+            raise ValueError(f"unknown team names: {df.loc[info.isna(), 'Team'].tolist()}")
+        df.insert(1, "Tm", info.str[0])
+        df.insert(2, "sc_team", info.str[1])
+        df.insert(3, "Lg", info.str[2])
+        df.insert(4, "Div", info.str[3])
+        df.insert(0, "season", season)
         df.to_parquet(filepath, index=False)
         meta = _load_metadata()
-        meta[f"team_batting_{season}_last_refresh"] = datetime.now().isoformat()
-        meta[f"team_batting_{season}_rows"] = len(df)
+        meta[f"{name}_{season}_last_refresh"] = datetime.now().isoformat()
+        meta[f"{name}_{season}_rows"] = len(df)
         _save_metadata(meta)
         return df
     except Exception as e:
-        st.warning(f"Could not refresh team batting from FanGraphs (likely blocked): {e}. Using cached data if available.")
+        st.warning(f"Could not download team {kind} stats for {season}: {e}. Keeping saved data if any.")
         if os.path.exists(filepath):
             return pd.read_parquet(filepath)
         return pd.DataFrame()
+
+
+def download_team_batting(season=2025):
+    return _download_team_table(season, "batting")
 
 
 def download_team_pitching(season=2025):
-    from pybaseball import team_pitching
-    ensure_data_dir()
-    filepath = os.path.join(DATA_DIR, f"team_pitching_{season}.parquet")
-    try:
-        df = team_pitching(season)
-        df.to_parquet(filepath, index=False)
-        meta = _load_metadata()
-        meta[f"team_pitching_{season}_last_refresh"] = datetime.now().isoformat()
-        meta[f"team_pitching_{season}_rows"] = len(df)
-        _save_metadata(meta)
-        return df
-    except Exception as e:
-        st.warning(f"Could not refresh team pitching from FanGraphs (likely blocked): {e}. Using cached data if available.")
-        if os.path.exists(filepath):
-            return pd.read_parquet(filepath)
-        return pd.DataFrame()
+    return _download_team_table(season, "pitching")
 
 def download_batter_lookup(season=2025):
     from pybaseball import playerid_reverse_lookup
@@ -653,14 +720,14 @@ def load_statcast_pitching_agg(season=2025):
     return pd.DataFrame()
 
 def load_team_batting(season=2025):
-    filepath = os.path.join(DATA_DIR, f"team_batting_{season}.parquet")
+    filepath = os.path.join(DATA_DIR, f"team_batting_br_{season}.parquet")
     if os.path.exists(filepath):
         return pd.read_parquet(filepath)
     return pd.DataFrame()
 
 
 def load_team_pitching(season=2025):
-    filepath = os.path.join(DATA_DIR, f"team_pitching_{season}.parquet")
+    filepath = os.path.join(DATA_DIR, f"team_pitching_br_{season}.parquet")
     if os.path.exists(filepath):
         return pd.read_parquet(filepath)
     return pd.DataFrame()
@@ -712,15 +779,13 @@ def refresh_all_data(season=2025, full_statcast=False):
         df = download_statcast_batting_agg(season)
         results["sc_batting"] = len(df)
     
-    # TODO: re-enable with 5_Team_Comparison
-    # with st.spinner("Downloading team batting stats..."):
-    #     df = download_team_batting(season)
-    #     results["team_batting"] = len(df)
+    with st.spinner("Downloading team batting stats..."):
+        df = download_team_batting(season)
+        results["team_batting"] = len(df)
 
-    # TODO: re-enable with 5_Team_Comparison
-    # with st.spinner("Downloading team pitching stats..."):
-    #     df = download_team_pitching(season)
-    #     results["team_pitching"] = len(df)
+    with st.spinner("Downloading team pitching stats..."):
+        df = download_team_pitching(season)
+        results["team_pitching"] = len(df)
 
     with st.spinner("Building batter name lookup (this may take a minute)..."):
         df = download_batter_lookup(season)

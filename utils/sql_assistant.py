@@ -39,6 +39,8 @@ VIEWS = {
     "savant_pitcher_pct": (r"statcast_pitcher_pcts_(\d{4})\.parquet", False),
     "savant_batting":    (r"statcast_batting_agg_(\d{4})\.parquet", True),
     "savant_pitching":   (r"statcast_pitching_agg_(\d{4})\.parquet", True),
+    "team_batting":      (r"team_batting_br_(\d{4})\.parquet", False),  # has season
+    "team_pitching":     (r"team_pitching_br_(\d{4})\.parquet", False),
     "fantasy_batters":   (r"fantasy_batters\.parquet", False),
     "fantasy_pitchers":  (r"fantasy_pitchers\.parquet", False),
     "fantasy_weekly":    (r"yahoo_weekly_player_stats\.parquet", False),

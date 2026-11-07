@@ -9,6 +9,7 @@ Use DuckDB SQL. Quote any column whose name has a symbol or starts with a digit:
 | Question is about… | Use |
 |---|---|
 | Season totals: HR, RBI, AVG, OPS, WAR, ERA, IP, wins, saves | `batting` / `pitching` (Baseball Reference) |
+| Team totals, team records, standings | `team_batting` / `team_pitching` |
 | Postseason totals | `batting_post` / `pitching_post` |
 | Anything by date, game, inning, count, pitch type, opponent, exit velocity, launch angle, location | `statcast` (one row per pitch) |
 | Splits vs LHP/RHP, home/away, by month (batters only) | `splits` (or `statcast`) |
@@ -46,6 +47,17 @@ Critical rules:
 - `Tm` uses Baseball Reference codes: ARI, ATH, ATL, BAL, BOS, CHC, CHW, CIN, CLE, COL, DET, HOU, KCR, LAA, LAD, MIA, MIL, MIN, NYM, NYY, PHI, PIT, SDP, SEA, SFG, STL, TBR, TEX, TOR, WSN. `Lg` is AL/NL (or e.g. '2LG' on combined rows).
 - `Pos` is a string like `'*2/DH'`: `*` marks primary position; digits 1=P 2=C 3=1B 4=2B 5=3B 6=SS 7=LF 8=CF 9=RF, `D`/`DH` = DH. Primary catcher: `Pos LIKE '*2%'`.
 - "Qualified" hitters: about 3.1 PA per team game (502 PA over 162 games). Qualified pitchers: 1 IP per team game (162 IP). For the 2026 season, 162 games were played.
+
+## team_batting / team_pitching — Baseball Reference team totals
+
+One row per team per season (30 rows per season, no league-average rows, no duplicates). Identity columns on both: `season, Team` (full name, e.g. 'Seattle Mariners'), `Tm` (Baseball Reference code, matches `batting.Tm`; the A's are 'OAK' in 2023–24 and 'ATH' from 2025), `sc_team` (Statcast code, matches `statcast.home_team`/`away_team`), `Lg` ('AL'/'NL'), `Div` ('AL East', 'AL Central', 'AL West', 'NL East', 'NL Central', 'NL West').
+
+**`team_batting`**: `"#Bat"` (players used), `BatAge`, `"R/G"`, `G, PA, AB, R, H, "2B", "3B", HR, RBI, SB, CS, BB, SO, BA, OBP, SLG, OPS, "OPS+", TB, GDP, HBP, SH, SF, IBB, LOB`
+**`team_pitching`**: `"#P"`, `PAge`, `"RA/G"`, `W, L, "W-L%", ERA, G, GS, GF, CG, tSho, cSho, SV, IP, H, R, ER, HR, BB, IBB, SO, HBP, BK, WP, BF, "ERA+", FIP, WHIP, H9, HR9, BB9, SO9, "SO/W", LOB`
+
+- **Team wins/losses are `team_pitching.W` / `.L`.** Runs scored = `team_batting.R`; runs allowed = `team_pitching.R`. Join the two on `(season, Team)`.
+- Games behind in a division: `((leader W − W) + (L − leader L)) / 2`.
+- Prefer these tables over summing `batting`/`pitching` by team.
 
 ## statcast — pitch-level data (all seasons, regular season only)
 

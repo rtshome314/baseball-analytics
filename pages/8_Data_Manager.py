@@ -39,8 +39,8 @@ dataset_labels = {
     "statcast_pitching_agg": "Statcast Pitching Aggregates",
     "statcast_batter_pcts": "Statcast Batter Percentiles (Savant)",
     "statcast_pitcher_pcts": "Statcast Pitcher Percentiles (Savant)",
-    # "team_batting": "Team Batting Stats",   # TODO: re-enable with 5_Team_Comparison
-    # "team_pitching": "Team Pitching Stats", # TODO: re-enable with 5_Team_Comparison
+    "team_batting": "Team Batting Stats (Baseball Reference)",
+    "team_pitching": "Team Pitching Stats (Baseball Reference)",
     "batter_lookup": "Batter Name Lookup",
     "split_summary": "Split Summary (Pre-calculated)",
 }

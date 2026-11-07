@@ -172,6 +172,8 @@ def render_data_status(dataset_keys, season=None):
         "statcast_batter_pcts": "Batter Percentiles",
         "statcast_pitcher_pcts": "Pitcher Percentiles",
         "batter_lookup": "Batter Lookup",
+        "team_batting": "Team Batting",
+        "team_pitching": "Team Pitching",
     }
 
     parts = []
